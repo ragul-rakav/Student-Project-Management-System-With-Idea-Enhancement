@@ -1,196 +1,132 @@
-<div align="center">
+# Student Project Management System With Idea Enhancement & Patentability Checker
 
-# ProjectPulse — Student Project Management System With Idea Enhancement & Patentability Checker
-### Advanced Academic Project Repository, Patentability Evaluator & Originality Governance Platform
-
-**An AI-Powered Academic Portfolio, Hybrid Vector Similarity Engine, Patentability Verifier, Idea Enhancement Recommender, Resubmission Detector & Project Governance Platform**
-
-[![React](https://img.shields.io/badge/Frontend-React%2019-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Vector Search](https://img.shields.io/badge/AI-pgvector%20%2F%20Cosine%20Search-9cf?logo=openai&logoColor=black)](https://github.com/pgvector/pgvector)
-[![Express](https://img.shields.io/badge/Server-Express%204.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+An intelligent academic platform that manages student projects, prevents duplicate submissions using AI originality checking, evaluates patentability against prior art, suggests innovation ideas, and streamlines faculty reviews.
 
 ---
 
-### Platform Highlights
-- **AI Originality Engine**: Real-time vector similarity detection across title, abstract, problem statement, objectives, methodology, and tech stack.
-- **Dynamic Idea Enhancement**: Intelligently recommends 1 to 3 domain-tailored architectural and technical innovations if a submission has low originality, allowing one-click enhancement application.
-- **Simplified Patentability & Prior Art Checker**: Plain-language legal criteria evaluation (Novelty, Non-obviousness, Industrial Utility) cross-referenced against external published patents (Google Patents, WIPO, USPTO).
-- **Deterministic Domain-to-Faculty Review Mapping**: Automatically routes incoming student submissions strictly to designated testing domain chairs with complete audit records.
-- **Rejected Project Detection & Resubmission Audit**: Immutable submission history; flags re-submitted work even under altered titles with original rejecting faculty, date, reason, and prior comments.
-- **Professional, Accessible Design**: Subtle, high-contrast, modern slate UI with accessible SVG iconography and zero distracting glows or emojis.
+## 📌 What is in this Project?
 
-</div>
+### 1. 🔍 AI Originality Checker
+- Checks draft project proposals in real-time before submission.
+- Uses a hybrid similarity score (semantic vector similarity + text matching + tech stack overlap).
+- Automatically warns or blocks submissions if they are too similar to existing projects in the repository.
 
----
+### 2. 💡 Idea Enhancement Recommender
+- When a project has low originality or routine concepts, the system suggests **1 to 3 domain-tailored technical enhancements** (e.g., adding edge AI processing, verifiable cryptographic audit logs, or privacy-preserving federated models).
+- Students can apply suggested enhancements with a single click to upgrade their proposal.
 
-## 👥 Team Details (Team Codexx)
+### 3. 📜 Simplified Patentability & Prior Art Checker
+- Analyzes submissions against legal patent standards:
+  - **Novelty** (Are the core mechanisms new?)
+  - **Non-Obviousness** (Is it an inventive step beyond standard web/CRUD apps?)
+  - **Industrial Applicability** (Can it solve real-world industry problems?)
+- Cross-references external databases (such as Google Patents) to detect similar patents and provide clear justifications.
 
-| Role | Member Name | Register Number | Email |
-| :--- | :--- | :--- | :--- |
-| **Team Lead** | **Aarthi S** | `7376241CS102` | `aarthis.cs24@bitsathy.ac.in` |
-| **Member 1** | **Swathi S** | `7376241CS427` | `swathis.cs24@bitsathy.ac.in` |
-| **Member 2** | **Abishek R** | `7376241CS111` | `abishekr.cs24@bitsathy.ac.in` |
-| **Member 3** | **K S Ragul Rakav** | `7376241CS221` | `ksragulrakav.cs24@bitsathy.ac.in` |
+### 4. 👨‍🏫 Testing Faculty Review Panel & Routing
+- Projects are deterministically mapped to domain chairs for review:
+  - **Web Development & Full-Stack** $\rightarrow$ Dr. Senthamizhan V
+  - **AI & Machine Learning** $\rightarrow$ Dr. Aarthi S
+  - **Mobile & IoT** $\rightarrow$ Dr. Thenmozhi K
+- If a rejected project is resubmitted under a modified title, faculty see a **Resubmission Alert** with previous rejection reasons and reviewer feedback.
+- Faculty can **Approve**, **Request Changes**, or **Reject** with recorded reasons.
 
-*For complete team member details, see [`TEAM_DETAILS.md`](TEAM_DETAILS.md).*
-
----
-
-## ✨ ProjectPulse Core Features
-
-### 🧠 1. AI-Powered Similarity & Duplicate Prevention
-- Analyzes title, domain category, abstract, problem statement, objectives, methodology, and technical stack.
-- Hybrid similarity scoring combines:
-  - **Semantic Vector Cosine Distance** (60% weight)
-  - **Lexical N-Gram & Jaccard Overlap** (25% weight)
-  - **Tech Stack Jaccard Index** (15% weight)
-- Evaluates composite originality percentage ($\text{Originality} = 100 - \text{Similarity}$).
-- Blocks direct duplicate submissions ($\ge 80\%$ similarity) with actionable student guidance.
-- Interactive student **"⚡ Pre-Check Originality"** assistant in the submission modal.
-
-### 🚨 2. Rejected Project Detection & Cross-Faculty Audit
-- Maintains an **immutable submission lifecycle** (`submissions`, `review_decisions`, `rejected_resubmission_flags`).
-- Rejections are never overwritten or discarded.
-- When a student resubmits a similar project under a new or perturbed title:
-  - Submissions are flagged: `🚨 Resubmission Alert`.
-  - Reviewing faculty (any faculty member) is provided with:
-    - Prior project title and submission ID
-    - Original rejecting faculty member name
-    - Official recorded rejection reason and category
-    - Previous faculty review comments
-    - Similarity score and matched project sections breakdown (Abstract, Title, Tech)
-    - Direct link to inspect the historical decision audit trail.
-
-### ⚖️ 3. Faculty Review Panel & Immutable Decision Audit
-- Three distinct evaluation actions:
-  - **Approve Submission**: Updates status to Approved, records reviewer identity, and awards gamified credits (+15 Internal, +20 External).
-  - **Request Changes**: Records constructive notes and notifies student for revision.
-  - **Reject Submission**: Dedicated modal requiring a structured rejection reason category and technical justification. Archived permanently.
-- Historical decision log accessible to faculty and administrators at `/api/reviews/history/:submissionId`.
-
-### 🔐 4. Multi-Role Authentication & Access Control
-- JWT access tokens coupled with secure HttpOnly refresh-token cookies.
-- Server-side RBAC protecting student views from confidential reviewer identities and private faculty notes.
-- Tiered repository unlocking based on credits and approved projects.
+### 5. ⚡ Quick Testing Tools
+- Includes instant test login shortcuts on the login page for quick role switching (Student, Faculty, Admin).
+- Form shuffle/random fill buttons to instantly test submission forms without repetitive typing.
 
 ---
 
-## 🛠️ Quick Start & Installation
+## 🚀 How to Run the Project Locally
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- PostgreSQL (v14 or higher)
+- **Node.js** (v18 or higher)
+- **PostgreSQL** (v14 or higher)
 
-### 1. Backend Setup (`server`)
+---
+
+### Step 1: Set up the Database
+
+1. Open PostgreSQL (e.g. pgAdmin or psql) and create a database:
+   ```sql
+   CREATE DATABASE student_project_repository;
+   ```
+
+2. Configure environment variables in `server/.env` (you can copy `server/.env.example`):
+   ```env
+   PORT=5000
+   DATABASE_URL=postgres://postgres:your_password@localhost:5432/student_project_repository
+   JWT_SECRET=your_jwt_secret_key
+   EMBEDDING_PROVIDER=local
+   ```
+   *(Note: `EMBEDDING_PROVIDER=local` runs completely offline with no external API keys required).*
+
+---
+
+### Step 2: Set up & Start the Backend
+
+Open a terminal in the root folder:
+
 ```bash
 cd server
 npm install
 
-# Run database migration and seed authentic users & projects into PostgreSQL
+# Run migration to create tables and seed default users & sample projects
 node database/migrateAndSeed.js
 
-# Run the test suite
-npm test
-
-# Start server
+# Start backend server
 npm run dev
 ```
 
-### 2. Frontend Setup (`client`)
-```bash
-cd ../client
-npm install
-npm run build
-npm run dev
-```
+The backend server will run at: **http://localhost:5000**
 
 ---
 
-## 🤖 Configuring AI Embedding Providers
+### Step 3: Set up & Start the Frontend
 
-ProjectPulse supports pluggable embedding providers configured via `server/.env`:
+Open a second terminal in the root folder:
 
-### Option A: Local Deterministic Vectorizer (Default / Offline / Tests)
-No API keys required. Uses a high-performance 128-dimensional subword TF-IDF feature hashing vectorizer:
-```env
-EMBEDDING_PROVIDER=local
+```bash
+cd client
+npm install
+
+# Start Vite frontend dev server
+npm run dev
 ```
 
-### Option B: Google Gemini Embeddings
-Generates 768-dimensional semantic embeddings using `text-embedding-004`:
-```env
-EMBEDDING_PROVIDER=gemini
-GEMINI_API_KEY=your_google_gemini_api_key_here
-```
-
-### Option C: OpenAI Embeddings
-Generates 1536-dimensional semantic embeddings using `text-embedding-3-small`:
-```env
-EMBEDDING_PROVIDER=openai
-OPENAI_API_KEY=your_openai_api_key_here
-```
+The frontend application will run at: **http://localhost:5173**
 
 ---
 
 ## 🧪 Running Automated Tests
 
-ProjectPulse includes automated unit and integration tests powered by Vitest and Supertest:
+To run the Vitest test suite for similarity, patentability, auth, and reviews:
+
 ```bash
 cd server
 npm test
 ```
 
-Test coverage includes:
-- **`similarity.test.js`**: Vector normalization, cosine similarity, duplicate detection, rejected resubmission detection, and novel project scoring.
-- **`review.test.js`**: Mandatory rejection reasons, immutable decision recording, and cross-role authorization checks.
-- **`auth.test.js`**: Access tokens, refresh token creation, rotation, and revocation.
-- **`api.test.js`**: HTTP health check, `/api/similarity/check`, duplicate blocking (HTTP 409), and faculty review queue endpoints.
-
 ---
 
-## 🚀 Deployment Guide
+## 📁 Project Structure
 
-ProjectPulse is production-ready and architected for seamless cloud deployment:
-
-### Monolithic Full-Stack Deployment (Render / Railway / Heroku / VM)
-Because the Vite frontend builds directly into `server/public/` (`npm run build` in `client`), the Node.js Express server serves both the REST API and the static React Single Page Application.
-
-1. **Set Environment Variables on Host**:
-   - `PORT`: (Provided dynamically by host, default `5000`)
-   - `NODE_ENV`: `production`
-   - `DATABASE_URL`: `postgres://user:password@host:port/database`
-   - `JWT_SECRET`: Secure random string (e.g. 64 characters)
-   - `JWT_REFRESH_SECRET`: Secure random string
-   - `EMBEDDING_PROVIDER`: `local` (or `gemini` / `openai` with relevant API key)
-
-2. **Build & Start Commands**:
-   - **Build Command**:
-     ```bash
-     npm --prefix client install && npm --prefix client run build && npm --prefix server install
-     ```
-   - **Pre-deploy / Migration Command**:
-     ```bash
-     node server/database/migrateAndSeed.js
-     ```
-   - **Start Command**:
-     ```bash
-     node server/server.js
-     ```
-
-### Split Deployment (Vercel Frontend + Render Backend)
-- **Frontend (Vercel / Netlify)**:
-  - Root directory: `client`
-  - Build command: `npm run build`
-  - Output directory: `dist` (or default build target)
-  - Environment variable: `VITE_API_URL=https://your-server-domain.com`
-- **Backend (Render / Railway)**:
-  - Root directory: `server`
-  - Start command: `node server.js`
+```text
+├── client/                 # React 19 + Vite frontend
+│   ├── src/
+│   │   ├── components/     # UI components & SVG icons
+│   │   ├── pages/          # Projects, Reviews, Ideas, Leaderboard pages
+│   │   ├── context/        # Authentication & global application state
+│   │   └── utils/          # Random data test generator
+├── server/                 # Express REST API backend
+│   ├── controllers/        # Route controllers (projects, reviews, similarity)
+│   ├── services/           # AI originality, patentability & review logic
+│   ├── database/           # PostgreSQL migrations & seed data
+│   ├── infrastructure/     # Vector similarity engine & text vectorizer
+│   └── tests/              # Vitest automated test suite
+└── package.json            # Root workspace scripts
+```
 
 ---
 
 ## 📄 License
-This project is licensed under the MIT License - see the [`LICENSE`](LICENSE) file for details.
+This project is licensed under the MIT License.
