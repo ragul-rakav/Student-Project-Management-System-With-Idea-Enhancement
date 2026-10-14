@@ -1,0 +1,25 @@
+{
+  "name": "student-project-management-system",
+  "version": "1.0.0",
+  "description": "Student Project Management System With Idea Enhancement & Patentability Checker",
+  "main": "server/server.js",
+  "scripts": {
+    "install:all": "npm --prefix client install && npm --prefix server install",
+    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install",
+    "start": "node server/server.js",
+    "test": "npm --prefix server test",
+    "migrate": "node server/database/migrateAndSeed.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "student-project-management",
+    "idea-enhancement",
+    "patentability-checker",
+    "vector-search",
+    "academic-integrity"
+  ],
+  "author": "ragul-rakav",
+  "license": "MIT"
+}
