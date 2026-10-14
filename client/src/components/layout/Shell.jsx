@@ -11,16 +11,24 @@ const pageTitles = {
   '/ideas': 'Ideas',
   '/collaboration': 'Collaboration Center',
   '/leaderboard': 'Leaderboard',
-  '/reviews': 'Reviews',
+  '/reviews': 'Reviews Queue',
   '/guides': 'Guide Requests',
-  '/analytics': 'Analytics',
+  '/analytics': 'Platform Analytics',
   '/admin': 'Admin Center',
   '/profile': 'My Profile'
 };
 
 export default function Shell({ children }) {
   const { currentUser, logout } = useAuth();
-  const { sidebarCollapsed, mobileSidebarOpen, setMobileSidebarOpen, toggleSidebar, showToast } = useApp();
+  const {
+    sidebarCollapsed,
+    mobileSidebarOpen,
+    setMobileSidebarOpen,
+    toggleSidebar,
+    showToast,
+    theme,
+    toggleTheme
+  } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -98,9 +106,9 @@ export default function Shell({ children }) {
         ]
       }];
     }
-    // Administrator Super Access
+    // Administrator
     return [{
-      section: 'Administration & Management', items: [
+      section: 'Administration & Governance', items: [
         { path: '/dashboard', label: 'Dashboard', icon: 'home' },
         { path: '/admin', label: 'Admin Center', icon: 'usercog' },
         { path: '/projects', label: 'Repository', icon: 'folder' },
@@ -116,64 +124,88 @@ export default function Shell({ children }) {
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
+  const shellClass = `app-shell${sidebarCollapsed ? ' sidebar-collapsed' : ''}`;
   const sidebarClass = `sidebar${sidebarCollapsed ? ' collapsed' : ''}${mobileSidebarOpen ? ' mobile-open' : ''}`;
 
   return (
-    <div className="app-shell">
+    <div className={shellClass}>
       {mobileSidebarOpen && (
         <div className="scrim" onClick={() => setMobileSidebarOpen(false)}></div>
       )}
+
+      {/* STATIC FIXED SIDEBAR */}
       <aside className={sidebarClass}>
         <div className="brand-row">
           <div className="brand-mark"><Icon name="book" size={18} /></div>
           <div className="brand-text">
-            <div className="brand">ProjectHub</div>
-            <div className="brand-sub">SHOWCASE PLATFORM</div>
+            <div className="brand">ProjectPulse</div>
+            <div className="brand-sub">AI ORIGINALITY & REPO</div>
           </div>
         </div>
-        {getNavConfig().map((sec, idx) => (
-          <div key={idx} className="nav-section">
-            <div className="section-label">{sec.section}</div>
-            {sec.items.map((it) => {
-              const isActive = location.pathname === it.path;
-              return (
-                <a
-                  key={it.path}
-                  className={`nav-item ${isActive ? 'active' : ''}`}
-                  onClick={() => {
-                    navigate(it.path);
-                    setMobileSidebarOpen(false);
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  <Icon name={it.icon} size={17} />
-                  <span className="nav-label">{it.label}</span>
-                </a>
-              );
-            })}
-          </div>
-        ))}
+
+        <div className="sidebar-nav-container">
+          {getNavConfig().map((sec, idx) => (
+            <div key={idx} className="nav-section">
+              <div className="section-label">{sec.section}</div>
+              {sec.items.map((it) => {
+                const isActive = location.pathname === it.path;
+                return (
+                  <a
+                    key={it.path}
+                    className={`nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => {
+                      navigate(it.path);
+                      setMobileSidebarOpen(false);
+                      window.scrollTo(0, 0);
+                    }}
+                    title={sidebarCollapsed ? it.label : undefined}
+                  >
+                    <Icon name={it.icon} size={17} />
+                    <span className="nav-label">{it.label}</span>
+                  </a>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
         <div className="sidebar-spacer"></div>
-        <a className="signout" onClick={logout}>
+
+        {/* PINNED SIGN OUT BUTTON */}
+        <a className="signout" onClick={logout} title={sidebarCollapsed ? 'Sign out' : undefined}>
           <Icon name="logout" size={17} />
           <span className="signout-label">Sign out</span>
         </a>
       </aside>
+
+      {/* MAIN CONTENT AREA */}
       <div className="main-col">
         <div className="topbar">
           <div className="topbar-left">
-            <button className="icon-btn" onClick={toggleSidebar}>
+            <button className="icon-btn" onClick={toggleSidebar} title="Toggle Sidebar">
               <Icon name="panel" size={18} />
             </button>
             <div className="crumb"><b>{pageTitles[location.pathname] || 'Dashboard'}</b></div>
           </div>
-          <div className="topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+
+          <div className="topbar-right">
+            {/* Dark / Light Mode Toggle Button */}
+            <button
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+              aria-label="Toggle theme"
+            >
+              <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={17} />
+            </button>
+
             {/* Interactive Notification Bell */}
             <div style={{ position: 'relative' }} ref={notifRef}>
               <button
                 className="icon-btn"
                 style={{ position: 'relative', cursor: 'pointer' }}
                 onClick={() => setNotifOpen(!notifOpen)}
+                title="Notifications"
               >
                 <Icon name="bell" size={18} />
                 {unreadCount > 0 && (
@@ -189,12 +221,11 @@ export default function Shell({ children }) {
 
               {notifOpen && (
                 <div className="card" style={{
-                  position: 'absolute', right: 0, top: '40px', width: '320px', zIndex: 1000,
-                  padding: '14px', border: '1px solid rgba(255,255,255,0.1)', background: '#0f172a',
-                  boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)'
+                  position: 'absolute', right: 0, top: '44px', width: '320px', zIndex: 1000,
+                  padding: '16px', background: 'var(--card-solid)', boxShadow: 'var(--shadow-lg)'
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <b style={{ fontSize: '14px', color: '#fff' }}>Notifications</b>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <b style={{ fontSize: '14px', color: 'var(--text)' }}>Notifications</b>
                     <span style={{ fontSize: '11px', color: 'var(--muted)' }}>{notifications.length} total</span>
                   </div>
                   <div style={{ maxHeight: '280px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -204,14 +235,14 @@ export default function Shell({ children }) {
                         onClick={() => handleNotifClick(n)}
                         style={{
                           display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-                          padding: '10px', borderRadius: '8px', background: n.read ? 'transparent' : 'rgba(99,102,241,0.1)',
-                          cursor: 'pointer', border: '1px solid rgba(255,255,255,0.04)'
+                          padding: '10px', borderRadius: '10px', background: n.read ? 'transparent' : 'rgba(99,102,241,0.08)',
+                          cursor: 'pointer', border: '1px solid var(--border)'
                         }}
                       >
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                           <Icon name={n.icon || 'bell'} size={15} />
                           <div>
-                            <div style={{ fontSize: '12px', color: n.read ? 'var(--muted)' : '#fff', fontWeight: n.read ? 400 : 600 }}>{n.text}</div>
+                            <div style={{ fontSize: '12px', color: n.read ? 'var(--muted)' : 'var(--text)', fontWeight: n.read ? 400 : 600 }}>{n.text}</div>
                             <div style={{ fontSize: '10px', color: 'var(--muted-2)', marginTop: '2px' }}>{n.time || 'Just now'}</div>
                           </div>
                         </div>
@@ -235,13 +266,15 @@ export default function Shell({ children }) {
             <span className="user-name">{currentUser?.name}</span>
             <div
               className="avatar"
-              style={{ cursor: 'pointer' }}
               onClick={() => navigate('/profile')}
+              title="View Profile"
             >
               {currentUser?.initials || 'AJ'}
             </div>
           </div>
         </div>
+
+        {/* PAGE CONTENT */}
         <div className="page">{children}</div>
       </div>
     </div>

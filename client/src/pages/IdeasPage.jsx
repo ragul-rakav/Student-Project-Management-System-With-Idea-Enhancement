@@ -5,6 +5,8 @@ import api from '../services/api';
 import Icon from '../components/common/Icons';
 import { BadgeType } from '../components/common/Badge';
 import { EmptyState } from '../components/common/Toast';
+import RandomFillButton from '../components/common/RandomFillButton';
+import { getRandomIdea } from '../utils/mockDataGenerator';
 
 export default function IdeasPage() {
   const { currentUser } = useAuth();
@@ -34,6 +36,15 @@ export default function IdeasPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAutoFillIdea = () => {
+    const mock = getRandomIdea();
+    setTitle(mock.title);
+    setCategory('Machine Learning & IoT');
+    setTech(mock.tags);
+    setDescription(mock.description);
+    showToast('Auto-filled idea form with creative academic concept!');
   };
 
   const handlePublishIdea = async (e) => {
@@ -66,10 +77,10 @@ export default function IdeasPage() {
       </div>
 
       <div className="card" style={{ padding: '34px 20px', textAlign: 'center', marginBottom: '22px' }}>
-        <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', color: 'var(--accent)', boxShadow: '0 0 15px rgba(99,102,241,0.15)' }}>
+        <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--gray-bg)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', color: 'var(--accent)', boxShadow: '0 0 15px rgba(99,102,241,0.15)' }}>
           <Icon name="bulb" size={20} />
         </div>
-        <h3 style={{ margin: '0 0 6px', fontSize: '17px', color: '#fff' }}>Have an idea? Share it first.</h3>
+        <h3 style={{ margin: '0 0 6px', fontSize: '18px', color: 'var(--text)' }}>Have an idea? Share it first.</h3>
         <p style={{ margin: 0, color: 'var(--muted)', fontSize: '13.5px' }}>Ideas do not require faculty approval. Once published, peers can view, comment, and collaborate.</p>
       </div>
 
@@ -88,7 +99,7 @@ export default function IdeasPage() {
               <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '8px 0', lineHeight: 1.5 }}>
                 {p.abstract || p.description}
               </p>
-              <div className="proj-stats" style={{ marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
+              <div className="proj-stats" style={{ marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid var(--border)', fontSize: '13px' }}>
                 <span><Icon name="heart" size={15} /> {p.likes}</span>
                 <span><Icon name="comment" size={15} /> {p.commentsCount || (p.comments ? p.comments.length : 0)}</span>
                 <span><Icon name="eye" size={15} /> {p.views}</span>
@@ -103,14 +114,17 @@ export default function IdeasPage() {
       {/* MODAL: PUBLISH IDEA */}
       {modal && (
         <div className="overlay" onClick={(e) => e.target === e.currentTarget && setModal(false)}>
-          <div className="modal">
-            <h3>Publish Idea</h3>
+          <div className="modal" style={{ width: '480px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <h3 style={{ margin: 0 }}>Publish Idea</h3>
+              <RandomFillButton onFill={handleAutoFillIdea} label="Test Auto-Fill" />
+            </div>
             <p className="hint">Ideas go live instantly — no faculty approval needed.</p>
             <form onSubmit={handlePublishIdea}>
-              <div className="field"><label>Idea title</label><input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Campus Lost & Found App" /></div>
-              <div className="field"><label>Domain</label><input required value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. Artificial Intelligence" /></div>
-              <div className="field"><label>Technologies (comma separated)</label><input required value={tech} onChange={(e) => setTech(e.target.value)} placeholder="e.g. Solidity, React" /></div>
-              <div className="field"><label>Description</label><textarea required rows="3" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What problem does this solve?"></textarea></div>
+              <div className="field"><label>Idea title</label><input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Campus Micro-Grid Energy Exchange" /></div>
+              <div className="field"><label>Domain</label><input required value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. CleanTech, Machine Learning" /></div>
+              <div className="field"><label>Technologies (comma separated)</label><input required value={tech} onChange={(e) => setTech(e.target.value)} placeholder="e.g. IoT, Solidity, React" /></div>
+              <div className="field"><label>Description</label><textarea required rows="3" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What problem does this solve and how?"></textarea></div>
               <div className="modal-actions">
                 <button type="button" className="btn btn-outline" onClick={() => setModal(false)}>Cancel</button>
                 <button type="submit" className="btn btn-primary">Publish idea</button>

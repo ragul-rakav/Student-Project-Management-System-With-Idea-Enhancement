@@ -209,17 +209,17 @@ export default function AdminCenterPage() {
 
       <div className="card" style={{ padding: '22px', border: '1px solid rgba(255,255,255,0.05)' }}>
         <div className="sub-tabs" style={{ flexWrap: 'wrap', gap: '8px' }}>
-          <div className={`sub-tab ${tab === 'students' ? 'active' : ''}`} onClick={() => setTab('students')}>
-            🎓 Students Directory ({studentsList.length})
+          <div className={`sub-tab ${tab === 'students' ? 'active' : ''}`} onClick={() => setTab('students')} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Icon name="graduation" size={14} /> Students Directory ({studentsList.length})
           </div>
-          <div className={`sub-tab ${tab === 'faculty' ? 'active' : ''}`} onClick={() => setTab('faculty')}>
-            👩‍🏫 Faculty Directory ({facultyList.length})
+          <div className={`sub-tab ${tab === 'faculty' ? 'active' : ''}`} onClick={() => setTab('faculty')} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Icon name="faculty" size={14} /> Faculty Directory ({facultyList.length})
           </div>
-          <div className={`sub-tab ${tab === 'domains' ? 'active' : ''}`} onClick={() => setTab('domains')}>
-            ⚡ Custom Domain Requests {pendingDomainCount > 0 && `(${pendingDomainCount})`}
+          <div className={`sub-tab ${tab === 'domains' ? 'active' : ''}`} onClick={() => setTab('domains')} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Icon name="zap" size={14} /> Custom Domain Requests {pendingDomainCount > 0 && `(${pendingDomainCount})`}
           </div>
-          <div className={`sub-tab ${tab === 'reports' ? 'active' : ''}`} onClick={() => setTab('reports')}>
-            🛡️ Moderation Reports {pendingReportCount > 0 && `(${pendingReportCount})`}
+          <div className={`sub-tab ${tab === 'reports' ? 'active' : ''}`} onClick={() => setTab('reports')} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Icon name="shield" size={14} /> Moderation Reports {pendingReportCount > 0 && `(${pendingReportCount})`}
           </div>
           <div className={`sub-tab ${tab === 'departments' ? 'active' : ''}`} onClick={() => setTab('departments')}>
             Departments
@@ -233,7 +233,7 @@ export default function AdminCenterPage() {
         {tab === 'students' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', color: '#fff' }}>Student Directory & Accounts</h3>
+              <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text)' }}>Student Directory & Accounts</h3>
             </div>
             <table>
               <thead>
@@ -242,7 +242,7 @@ export default function AdminCenterPage() {
               <tbody>
                 {studentsList.map((u) => (
                   <tr key={u.id}>
-                    <td style={{ fontWeight: 600, color: '#fff' }}>{u.name}</td>
+                    <td style={{ fontWeight: 600, color: 'var(--text)' }}>{u.name}</td>
                     <td style={{ color: 'var(--muted)' }}>{u.email}</td>
                     <td>{u.dept}</td>
                     <td><span className="badge badge-gray">{u.academic_year}</span></td>
@@ -262,7 +262,7 @@ export default function AdminCenterPage() {
         {tab === 'faculty' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', color: '#fff' }}>Faculty Directory, Domains & Workload Controls</h3>
+              <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text)' }}>Faculty Directory, Domains & Workload Controls</h3>
             </div>
             <table>
               <thead>
@@ -271,7 +271,7 @@ export default function AdminCenterPage() {
               <tbody>
                 {facultyList.map((f) => (
                   <tr key={f.id}>
-                    <td style={{ fontWeight: 600, color: '#fff' }}>{f.name}</td>
+                    <td style={{ fontWeight: 600, color: 'var(--text)' }}>{f.name}</td>
                     <td style={{ color: 'var(--muted)' }}>{f.email}</td>
                     <td>{f.dept}</td>
                     <td style={{ maxWidth: '240px' }}>
@@ -305,7 +305,7 @@ export default function AdminCenterPage() {
         {tab === 'domains' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', color: '#fff' }}>Custom Domain Requests Verification</h3>
+              <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text)' }}>Custom Domain Requests Verification</h3>
             </div>
             {domainRequests.length ? (
               <table>
@@ -315,7 +315,7 @@ export default function AdminCenterPage() {
                 <tbody>
                   {domainRequests.map((r) => (
                     <tr key={r.id}>
-                      <td style={{ fontWeight: 600, color: '#fff' }}>{r.projectTitle}</td>
+                      <td style={{ fontWeight: 600, color: 'var(--text)' }}>{r.projectTitle}</td>
                       <td>{r.studentName}</td>
                       <td><span className="badge badge-yellow">{r.proposedDomain}</span></td>
                       <td style={{ color: 'var(--muted)' }}>{r.submittedAt}</td>
@@ -348,7 +348,7 @@ export default function AdminCenterPage() {
         {tab === 'reports' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', color: '#fff' }}>Reported Projects Moderation Queue</h3>
+              <h3 style={{ margin: 0, fontSize: '16px', color: 'var(--text)' }}>Reported Projects Moderation Queue</h3>
             </div>
             {reports.length ? (
               <table>
@@ -358,7 +358,7 @@ export default function AdminCenterPage() {
                 <tbody>
                   {reports.map((r) => (
                     <tr key={r.id}>
-                      <td style={{ fontWeight: 600, color: '#fff' }}>{r.projectTitle}</td>
+                      <td style={{ fontWeight: 600, color: 'var(--text)' }}>{r.projectTitle}</td>
                       <td>{r.reporter}</td>
                       <td><span className="badge badge-gray">{r.category}</span></td>
                       <td style={{ color: '#38bdf8', fontWeight: 500 }}>{r.assignedFaculty || 'Administrator'}</td>
@@ -405,7 +405,7 @@ export default function AdminCenterPage() {
               <tbody>
                 {departments.map((d, i) => (
                   <tr key={i}>
-                    <td style={{ fontWeight: 600, color: '#fff' }}>{d}</td>
+                    <td style={{ fontWeight: 600, color: 'var(--text)' }}>{d}</td>
                   </tr>
                 ))}
               </tbody>
@@ -447,7 +447,7 @@ export default function AdminCenterPage() {
               <div className="field"><label>Email</label><input required type="email" value={newUserEmail} onChange={(e) => setNewUserEmail(e.target.value)} placeholder="name@university.edu" /></div>
               <div className="field">
                 <label>Role</label>
-                <select value={newUserRole} onChange={(e) => setNewUserRole(e.target.value)} style={{ background: 'rgba(3,7,18,0.4)', color: '#fff' }}>
+                <select value={newUserRole} onChange={(e) => setNewUserRole(e.target.value)} style={{ background: 'rgba(3,7,18,0.4)', color: 'var(--text)' }}>
                   <option>Student</option>
                   <option>Faculty</option>
                   <option>Administrator</option>
@@ -492,7 +492,7 @@ export default function AdminCenterPage() {
           <div className="modal" style={{ width: '540px' }}>
             <h3>Inspect Violation Report</h3>
             <div style={{ background: 'rgba(15,23,42,0.8)', padding: '12px', borderRadius: '8px', marginBottom: '14px', fontSize: '13px' }}>
-              <div style={{ color: '#fff', fontWeight: 600 }}>Project: {inspectReport.projectTitle}</div>
+              <div style={{ color: 'var(--text)', fontWeight: 600 }}>Project: {inspectReport.projectTitle}</div>
               <div style={{ color: 'var(--muted)', marginTop: '2px' }}>Reporter: <b>{inspectReport.reporter}</b> &middot; Category: {inspectReport.category}</div>
               <div style={{ color: '#cbd5e1', marginTop: '6px' }}>Reason: "{inspectReport.reason}"</div>
             </div>
@@ -506,8 +506,9 @@ export default function AdminCenterPage() {
                 onChange={(e) => setReportRemark(e.target.value)}
                 placeholder="Enter investigation remark..."
               ></textarea>
-              <div style={{ fontSize: '11.5px', color: 'var(--muted)', marginTop: '4px' }}>
-                ⚠️ Dismissing an invalid report applies a <b>-5 credit penalty</b> to reporter ({inspectReport.reporter}).
+              <div style={{ fontSize: '11.5px', color: 'var(--muted)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Icon name="alert" size={13} style={{ color: '#fbbf24' }} />
+                <span>Dismissing an invalid report applies a <b>-5 credit penalty</b> to reporter ({inspectReport.reporter}).</span>
               </div>
             </div>
 

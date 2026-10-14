@@ -68,11 +68,11 @@ export default function AnalyticsPage() {
 
       <div className="dash-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
         <div className="card" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '16px', color: '#fff' }}>Projects by Category</h3>
+          <h3 style={{ margin: '0 0 16px', fontSize: '16px', color: 'var(--text)' }}>Projects by Category</h3>
           {a.categories.map(([label, val, tot], idx) => (
             <div key={idx} style={{ marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13.5px', marginBottom: '6px' }}>
-                <span>{label}</span><b style={{ color: '#fff' }}>{val}</b>
+                <span>{label}</span><b style={{ color: 'var(--text)' }}>{val}</b>
               </div>
               <div className="progress-track">
                 <div className="progress-fill" style={{ width: `${Math.round((val / (tot || 1)) * 100)}%` }}></div>
@@ -82,10 +82,10 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="card" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: '#fff' }}>Top Departments</h3>
+          <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: 'var(--text)' }}>Top Departments</h3>
           {a.departments.map(([label, val], idx) => (
             <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '14px' }}>
-              <span>{label}</span><b style={{ color: '#fff' }}>{val} projects</b>
+              <span>{label}</span><b style={{ color: 'var(--text)' }}>{val} projects</b>
             </div>
           ))}
         </div>

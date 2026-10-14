@@ -5,6 +5,7 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 let pool = null;
 let isPgConnected = false;
+let connectionPromise = null;
 
 // Initialize PostgreSQL Pool
 const connectionString = process.env.DATABASE_URL || `postgres://${process.env.PGUSER || 'postgres'}:${process.env.PGPASSWORD || 'postgres'}@${process.env.PGHOST || 'localhost'}:${process.env.PGPORT || 5432}/${process.env.PGDATABASE || 'student_project_repository'}`;
@@ -20,25 +21,36 @@ pool.on('error', (err) => {
   console.warn('PostgreSQL pool background error:', err.message);
 });
 
-// Test connection on startup
-async function testConnection() {
-  try {
-    const client = await pool.connect();
-    isPgConnected = true;
-    console.log('✅ Connected to PostgreSQL database pool successfully');
-    client.release();
-  } catch (err) {
-    isPgConnected = false;
-    console.log('ℹ️ PostgreSQL not reachable locally. Utilizing high-performance JSON persistence adapter fallback.');
-  }
+async function ensureConnected() {
+  if (isPgConnected) return true;
+  if (connectionPromise) return connectionPromise;
+
+  connectionPromise = (async () => {
+    try {
+      const client = await pool.connect();
+      isPgConnected = true;
+      console.log('✅ Connected to PostgreSQL database pool successfully');
+      client.release();
+      return true;
+    } catch (err) {
+      isPgConnected = false;
+      console.log('ℹ️ PostgreSQL not reachable locally. Utilizing high-performance JSON persistence adapter fallback.');
+      return false;
+    }
+  })();
+
+  return connectionPromise;
 }
 
-testConnection();
+// Start connection check immediately
+ensureConnected();
 
 module.exports = {
   pool,
+  ensureConnected,
   isPgConnected: () => isPgConnected,
   query: async (text, params) => {
+    await ensureConnected();
     if (isPgConnected && pool) {
       return pool.query(text, params);
     }

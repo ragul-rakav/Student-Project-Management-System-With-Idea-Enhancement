@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const { notFoundHandler, errorHandler } = require('./middleware/errorMiddleware');
@@ -13,19 +14,23 @@ const guideRoutes = require('./routes/guideRoutes');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const similarityRoutes = require('./routes/similarityRoutes');
+
+const { similarityService } = require('./services/similarityService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS
+// Enable CORS with Credentials for cookies
 app.use(cors({
-  origin: '*',
+  origin: true,
   credentials: true
 }));
 
-// Body Parsers
+// Body & Cookie Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const fs = require('fs');
 
@@ -40,7 +45,11 @@ if (fs.existsSync(publicPath)) {
 
 // Health Check API
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'ProjectHub API Server is running clean', timestamp: new Date() });
+  res.json({
+    status: 'ok',
+    platform: 'ProjectPulse AI Originality Platform',
+    timestamp: new Date()
+  });
 });
 
 // API Routes
@@ -52,6 +61,7 @@ app.use('/api/guides', guideRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/similarity', similarityRoutes);
 
 // Single Page Application (SPA) Fallback Route for Frontend
 app.get('*', (req, res, next) => {
@@ -69,9 +79,14 @@ app.get('*', (req, res, next) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-if (process.env.NODE_ENV !== 'production' || require.main === module) {
+// Initialize Vector & AI Similarity Index
+similarityService.initialize().catch(err => {
+  console.warn('Startup similarityService init warning:', err.message);
+});
+
+if (process.env.NODE_ENV !== 'test' && require.main === module) {
   app.listen(PORT, () => {
-    console.log(`🚀 ProjectHub Express Backend Server listening on http://localhost:${PORT}`);
+    console.log(`ProjectPulse Express Backend Server listening on http://localhost:${PORT}`);
   });
 }
 

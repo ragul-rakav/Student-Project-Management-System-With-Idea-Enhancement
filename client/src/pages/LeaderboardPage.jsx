@@ -94,7 +94,7 @@ export default function LeaderboardPage() {
           {filter === 'dept' && (
             <select
               className="field"
-              style={{ width: 'auto', margin: 0, border: '1px solid var(--border)', borderRadius: '10px', padding: '7px 12px', fontSize: '13.5px', background: 'rgba(3,7,18,0.4)', color: '#fff' }}
+              style={{ width: 'auto', margin: 0, border: '1px solid var(--border)', borderRadius: '10px', padding: '7px 12px', fontSize: '13.5px', background: 'rgba(3,7,18,0.4)', color: 'var(--text)' }}
               value={dept}
               onChange={(e) => setDept(e.target.value)}
             >
@@ -104,7 +104,7 @@ export default function LeaderboardPage() {
           {filter === 'year' && (
             <select
               className="field"
-              style={{ width: 'auto', margin: 0, border: '1px solid var(--border)', borderRadius: '10px', padding: '7px 12px', fontSize: '13.5px', background: 'rgba(3,7,18,0.4)', color: '#fff' }}
+              style={{ width: 'auto', margin: 0, border: '1px solid var(--border)', borderRadius: '10px', padding: '7px 12px', fontSize: '13.5px', background: 'rgba(3,7,18,0.4)', color: 'var(--text)' }}
               value={year}
               onChange={(e) => setYear(e.target.value)}
             >
@@ -143,7 +143,7 @@ export default function LeaderboardPage() {
                   </td>
                   <td style={{ color: 'var(--muted)' }}>{s.dept}</td>
                   <td style={{ color: 'var(--muted)' }}>{s.year}</td>
-                  <td style={{ color: '#fff', fontWeight: 600 }}>{s.projects}</td>
+                  <td style={{ color: 'var(--text)', fontWeight: 600 }}>{s.projects}</td>
                   <td><span className="credit-pill"><Icon name="award" size={12} /> {s.credits}</span></td>
                 </tr>
               ))}
@@ -155,7 +155,7 @@ export default function LeaderboardPage() {
       </div>
 
       <div className="card" style={{ padding: '20px', marginTop: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-        <h3 style={{ margin: '0 0 12px', fontSize: '15.5px', color: '#fff' }}>Credit Policy</h3>
+        <h3 style={{ margin: '0 0 12px', fontSize: '15.5px', color: 'var(--text)' }}>Credit Policy</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: '12px' }}>
           {CREDIT_RULES.map(([label, val], idx) => (
             <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--gray-bg)', borderRadius: '10px', padding: '10px 13px', fontSize: '13px', border: '1px solid rgba(255,255,255,0.02)' }}>

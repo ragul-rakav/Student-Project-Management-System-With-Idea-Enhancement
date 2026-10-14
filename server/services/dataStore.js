@@ -85,10 +85,10 @@ let users = [
     ]
   },
 
-  // FACULTY (Demonstration Workload Capacity Thresholds)
-  { id: 13, name: 'Dr. Arumugam Pillai', email: 'arumugam@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Computer Science', academic_year: 'Senior Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Machine Learning', specializations: ['Machine Learning', 'Cloud Computing', 'Cybersecurity'], maxPendingThreshold: 2, initials: 'AP' },
-  { id: 14, name: 'Dr. Senthamizhan V', email: 'senthamizhan@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Computer Science', academic_year: 'Associate Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Web Development', specializations: ['Web Development', 'Cybersecurity', 'Mobile Development'], maxPendingThreshold: 1, initials: 'SV' },
-  { id: 15, name: 'Dr. Thenmozhi K', email: 'thenmozhi@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Information Technology', academic_year: 'Associate Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Mobile Development', specializations: ['Mobile Development', 'Internet of Things', 'Web Development'], maxPendingThreshold: 10, initials: 'TK' },
+  // FACULTY (Strict 3 Testing Faculty Accounts)
+  { id: 13, name: 'Dr. Arumugam Pillai', email: 'arumugam@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Computer Science', academic_year: 'Senior Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Machine Learning', specializations: ['Machine Learning', 'Cloud Computing', 'Blockchain'], maxPendingThreshold: 999, initials: 'AP' },
+  { id: 14, name: 'Dr. Senthamizhan V', email: 'senthamizhan@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Computer Science', academic_year: 'Associate Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Web Development', specializations: ['Web Development', 'Cybersecurity'], maxPendingThreshold: 999, initials: 'SV' },
+  { id: 15, name: 'Dr. Thenmozhi K', email: 'thenmozhi@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Information Technology', academic_year: 'Associate Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Mobile Development', specializations: ['Mobile Development', 'Internet of Things', 'Other'], maxPendingThreshold: 999, initials: 'TK' },
   { id: 16, name: 'Dr. Kabilan Pandian', email: 'kabilan@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Computer Science', academic_year: 'Assistant Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Blockchain', specializations: ['Blockchain', 'Machine Learning', 'Cloud Computing'], maxPendingThreshold: 10, initials: 'KP' },
   { id: 17, name: 'Dr. Rajeswari Velu', email: 'rajeswari@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Information Technology', academic_year: 'Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Cloud Computing', specializations: ['Cloud Computing', 'Web Development', 'Internet of Things'], maxPendingThreshold: 10, initials: 'RV' },
   { id: 18, name: 'Dr. Muruganandam S', email: 'muruganandam@university.edu', password: 'password', role: 'Faculty', status: 'Active', dept: 'Electronics', academic_year: 'Professor', credits: 0, approved_projects: 0, skills: [], domain_of_interest: 'Internet of Things', specializations: ['Internet of Things', 'Mobile Development', 'Blockchain'], maxPendingThreshold: 10, initials: 'MS' },
@@ -217,45 +217,54 @@ let nextCollabRequestId = 2;
 let nextReportId = 2;
 let nextDomainRequestId = 2;
 
-// AUTOMATED RANDOM FACULTY ASSIGNMENT HELPER WITH WORKLOAD THRESHOLD
+// 3 Testing Faculty accounts present in testing dropdowns
+const TESTING_FACULTY_NAMES = [
+  'Dr. Arumugam Pillai',
+  'Dr. Senthamizhan V',
+  'Dr. Thenmozhi K'
+];
+
+// Mapping of domains strictly to the 3 testing faculty for testing phase
+const DOMAIN_TO_TESTING_FACULTY = {
+  'machine learning': 'Dr. Arumugam Pillai',
+  'cloud computing': 'Dr. Arumugam Pillai',
+  'blockchain': 'Dr. Arumugam Pillai',
+  'web development': 'Dr. Senthamizhan V',
+  'cybersecurity': 'Dr. Senthamizhan V',
+  'mobile development': 'Dr. Thenmozhi K',
+  'internet of things': 'Dr. Thenmozhi K',
+  'other': 'Dr. Thenmozhi K'
+};
+
+// AUTOMATED FACULTY ASSIGNMENT HELPER
+// (In testing phase: strictly mapped to the 3 testing faculties based on selected domain)
 function assignRandomFacultyForDomain(domainCategory) {
-  // 1. Find all active Faculty users specialized in this domain
-  const eligibleFaculty = users.filter(u => {
-    if (u.role !== 'Faculty' || u.status !== 'Active') return false;
-    const specs = u.specializations || [u.domain_of_interest];
-    return specs.some(s => s.toLowerCase() === domainCategory.toLowerCase());
-  });
+  if (!domainCategory) return 'Dr. Arumugam Pillai';
+  const clean = String(domainCategory).toLowerCase().trim();
 
-  // 2. Filter out faculty who have reached or exceeded their maxPendingThreshold
-  const availableFaculty = eligibleFaculty.filter(f => {
-    const currentPendingCount = reviewQueue.filter(r => r.faculty === f.name).length;
-    const limit = f.maxPendingThreshold || 10;
-    return currentPendingCount < limit;
-  });
-
-  // 3. Randomly select one from available faculty
-  if (availableFaculty.length > 0) {
-    const randomIndex = Math.floor(Math.random() * availableFaculty.length);
-    return availableFaculty[randomIndex].name;
+  // 1. Direct match in lookup table
+  if (DOMAIN_TO_TESTING_FACULTY[clean]) {
+    return DOMAIN_TO_TESTING_FACULTY[clean];
   }
 
-  // Fallback: If all domain faculty hit capacity, pick any active faculty under capacity
-  const anyAvailableFaculty = users.filter(u => {
-    if (u.role !== 'Faculty' || u.status !== 'Active') return false;
-    const currentPendingCount = reviewQueue.filter(r => r.faculty === u.name).length;
-    return currentPendingCount < (u.maxPendingThreshold || 10);
-  });
-
-  if (anyAvailableFaculty.length > 0) {
-    const randomIndex = Math.floor(Math.random() * anyAvailableFaculty.length);
-    return anyAvailableFaculty[randomIndex].name;
+  // 2. Keyword matching for variations or custom domains (e.g. "Other (Quantum Computing Simulators)")
+  if (clean.includes('machine learning') || clean.includes('cloud') || clean.includes('blockchain') || clean.includes('ai') || clean.includes('deep learning')) {
+    return 'Dr. Arumugam Pillai';
+  }
+  if (clean.includes('web') || clean.includes('cyber') || clean.includes('security') || clean.includes('network')) {
+    return 'Dr. Senthamizhan V';
+  }
+  if (clean.includes('mobile') || clean.includes('iot') || clean.includes('internet of things') || clean.includes('sensor') || clean.includes('other')) {
+    return 'Dr. Thenmozhi K';
   }
 
-  // Absolute fallback
-  return 'Dr. Arumugam Pillai';
+  // 3. Absolute fallback: Dr. Thenmozhi K
+  return 'Dr. Thenmozhi K';
 }
 
 module.exports = {
+  TESTING_FACULTY_NAMES,
+  DOMAIN_TO_TESTING_FACULTY,
   predefinedDomains,
   users,
   projects,

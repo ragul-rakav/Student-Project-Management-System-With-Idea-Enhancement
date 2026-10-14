@@ -82,7 +82,7 @@ export default function ProfilePage() {
         <div>
           <div className="card" style={{ padding: '22px', marginBottom: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '17px', color: '#fff' }}>
+              <h3 style={{ margin: 0, fontSize: '17px', color: 'var(--text)' }}>
                 Portfolio Projects ({portfolio.length + ideas.length})
               </h3>
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -95,7 +95,7 @@ export default function ProfilePage() {
               {portfolio.map((p) => (
                 <div key={p.id} className="card" style={{ padding: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderColor: 'var(--border)' }}>
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: '14.5px', color: '#fff' }}>{p.title}</div>
+                    <div style={{ fontWeight: 600, fontSize: '14.5px', color: 'var(--text)' }}>{p.title}</div>
                     <div style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '2px' }}>Category: {p.category}</div>
                   </div>
                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -107,7 +107,7 @@ export default function ProfilePage() {
               {ideas.map((p) => (
                 <div key={p.id} className="card" style={{ padding: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderColor: 'var(--border)' }}>
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: '14.5px', color: '#fff' }}>{p.title}</div>
+                    <div style={{ fontWeight: 600, fontSize: '14.5px', color: 'var(--text)' }}>{p.title}</div>
                     <div style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '2px' }}>Category: {p.category}</div>
                   </div>
                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -136,7 +136,7 @@ export default function ProfilePage() {
           {/* CREDIT HISTORY AUDIT LOG */}
           <div className="card" style={{ padding: '22px', border: '1px solid rgba(255,255,255,0.05)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '17px', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ margin: 0, fontSize: '17px', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Icon name="award" size={18} /> Credit History Audit Log
               </h3>
               <span className="credit-pill"><Icon name="star" size={12} /> Total: {targetUser?.credits || 0} Points</span>
@@ -177,7 +177,7 @@ export default function ProfilePage() {
 
         <div>
           <div className="card" style={{ padding: '22px', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '17px', color: '#fff' }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: '17px', color: 'var(--text)' }}>
               {isSelf ? 'Edit Profile Details' : 'Student Information'}
             </h3>
             {isSelf ? (
@@ -216,15 +216,15 @@ export default function ProfilePage() {
               <div style={{ fontSize: '13.5px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
                   <b style={{ color: 'var(--muted)', fontSize: '12px', display: 'block' }}>Department</b>
-                  <span style={{ color: '#fff', fontWeight: 600 }}>{targetUser?.dept}</span>
+                  <span style={{ color: 'var(--text)', fontWeight: 600 }}>{targetUser?.dept}</span>
                 </div>
                 <div>
                   <b style={{ color: 'var(--muted)', fontSize: '12px', display: 'block' }}>Academic Year</b>
-                  <span style={{ color: '#fff', fontWeight: 600 }}>{targetUser?.academic_year}</span>
+                  <span style={{ color: 'var(--text)', fontWeight: 600 }}>{targetUser?.academic_year}</span>
                 </div>
                 <div>
                   <b style={{ color: 'var(--muted)', fontSize: '12px', display: 'block' }}>Domain of Interest</b>
-                  <span style={{ color: '#fff', fontWeight: 600 }}>{targetUser?.domain_of_interest || 'Not specified'}</span>
+                  <span style={{ color: 'var(--text)', fontWeight: 600 }}>{targetUser?.domain_of_interest || 'Not specified'}</span>
                 </div>
                 <div>
                   <b style={{ color: 'var(--muted)', fontSize: '12px', display: 'block', marginBottom: '6px' }}>Skills & Expertise</b>

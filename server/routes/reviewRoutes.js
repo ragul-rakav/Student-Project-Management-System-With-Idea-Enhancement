@@ -5,5 +5,6 @@ const { authenticateToken, authorizeRoles } = require('../middleware/authMiddlew
 
 router.get('/', authenticateToken, authorizeRoles('Faculty', 'Administrator'), reviewController.getReviews);
 router.post('/action', authenticateToken, authorizeRoles('Faculty', 'Administrator'), reviewController.reviewAction);
+router.get('/history/:submissionId', authenticateToken, reviewController.getReviewHistory);
 
 module.exports = router;

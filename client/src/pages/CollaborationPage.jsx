@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
 import Icon from '../components/common/Icons';
+import RandomFillButton from '../components/common/RandomFillButton';
 
 export default function CollaborationPage() {
   const { currentUser } = useAuth();
@@ -33,6 +34,16 @@ export default function CollaborationPage() {
       console.error('Fetch collaborations error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRandomSelectProject = () => {
+    if (availableProjects && availableProjects.length > 0) {
+      const randomProj = availableProjects[Math.floor(Math.random() * availableProjects.length)];
+      setSelectedProjId(randomProj.id);
+      showToast(`Auto-selected: "${randomProj.title}"`);
+    } else {
+      showToast('No available projects to select.');
     }
   };
 
@@ -77,7 +88,7 @@ export default function CollaborationPage() {
       </div>
 
       <div className="card" style={{ padding: '22px', marginBottom: '20px' }}>
-        <h3 style={{ margin: '0 0 14px', fontSize: '16.5px', color: '#fff' }}>Your Team Projects</h3>
+        <h3 style={{ margin: '0 0 14px', fontSize: '17px', color: 'var(--text)' }}>Your Team Projects</h3>
         {myCollabs.length ? (
           <table>
             <thead>
@@ -86,7 +97,7 @@ export default function CollaborationPage() {
             <tbody>
               {myCollabs.map((c) => (
                 <tr key={c.id}>
-                  <td style={{ fontWeight: 600, color: '#fff' }}>{c.title}</td>
+                  <td style={{ fontWeight: 600, color: 'var(--text)' }}>{c.title}</td>
                   <td><span className={`badge ${c.role === 'Owner' ? 'badge-green' : 'badge-blue'}`}>{c.role}</span></td>
                   <td>{c.collaborators.length ? c.collaborators.join(', ') : 'None'}</td>
                   <td>
@@ -103,7 +114,7 @@ export default function CollaborationPage() {
 
       {incoming.length > 0 && (
         <div className="card" style={{ padding: '22px', marginBottom: '20px', borderColor: 'var(--accent)' }}>
-          <h3 style={{ margin: '0 0 14px', fontSize: '16.5px', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <h3 style={{ margin: '0 0 14px', fontSize: '17px', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Icon name="users" size={18} /> Incoming Collaboration Requests
           </h3>
           <table>
@@ -113,7 +124,7 @@ export default function CollaborationPage() {
             <tbody>
               {incoming.map((r) => (
                 <tr key={r.id}>
-                  <td style={{ fontWeight: 600, color: '#fff' }}>{r.projectTitle}</td>
+                  <td style={{ fontWeight: 600, color: 'var(--text)' }}>{r.projectTitle}</td>
                   <td><span className="clickable-name">{r.requester}</span></td>
                   <td style={{ display: 'flex', gap: '8px' }}>
                     <button className="btn btn-primary btn-sm" onClick={() => handleRespond(r.id, true)}>Accept</button>
@@ -128,7 +139,10 @@ export default function CollaborationPage() {
 
       <div className="dash-grid">
         <div className="card" style={{ padding: '22px' }}>
-          <h3 style={{ margin: '0 0 14px', fontSize: '16.5px', color: '#fff' }}>Request Access to a Project</h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <h3 style={{ margin: 0, fontSize: '17px', color: 'var(--text)' }}>Request Access to a Project</h3>
+            <RandomFillButton onFill={handleRandomSelectProject} label="Random Select" />
+          </div>
           <p style={{ margin: '0 0 14px', color: 'var(--muted)', fontSize: '13px' }}>Propose to collaborate on an existing approved academic project.</p>
           <form onSubmit={handleRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div className="field" style={{ margin: 0 }}>
@@ -136,7 +150,6 @@ export default function CollaborationPage() {
                 value={selectedProjId}
                 onChange={(e) => setSelectedProjId(e.target.value)}
                 required
-                style={{ background: 'rgba(3,7,18,0.4)', color: '#fff' }}
               >
                 <option value="" disabled>Select an approved project...</option>
                 {availableProjects.map((p) => (
@@ -144,19 +157,19 @@ export default function CollaborationPage() {
                 ))}
               </select>
             </div>
-            <button type="submit" className="btn btn-outline" style={{ justifyContent: 'center' }}>
-              <Icon name="users" size={16} /> Request Access
+            <button type="submit" className="btn btn-primary" style={{ justifyContent: 'center' }}>
+              <Icon name="users" size={16} /> Request Collaboration Access
             </button>
           </form>
         </div>
 
         <div className="card" style={{ padding: '22px' }}>
-          <h3 style={{ margin: '0 0 14px', fontSize: '16.5px', color: '#fff' }}>Your Sent Requests</h3>
-          <div style={{ maxHeight: '180px', overflowY: 'auto', fontSize: '13px' }}>
+          <h3 style={{ margin: '0 0 14px', fontSize: '17px', color: 'var(--text)' }}>Your Sent Requests</h3>
+          <div style={{ maxHeight: '200px', overflowY: 'auto', fontSize: '13px' }}>
             {outgoing.length ? outgoing.map((r) => (
-              <div key={r.id} style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={r.id} style={{ padding: '10px 0', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontWeight: 600, color: '#fff' }}>{r.projectTitle}</div>
+                  <div style={{ fontWeight: 600, color: 'var(--text)' }}>{r.projectTitle}</div>
                   <div style={{ fontSize: '11px', color: 'var(--muted)' }}>Owner: {r.owner}</div>
                 </div>
                 <span className={`badge ${r.status === 'Accepted' ? 'badge-green' : r.status === 'Declined' ? 'badge-amber' : 'badge-blue'}`}>{r.status}</span>

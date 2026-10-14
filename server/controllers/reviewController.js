@@ -1,51 +1,40 @@
+const { reviewService } = require('../services/reviewService');
 const dataStore = require('../services/dataStore');
 
-exports.getReviews = (req, res) => {
+exports.getReviews = async (req, res) => {
   try {
-    const userName = req.user ? req.user.name : '';
-    const userRole = req.user ? req.user.role : '';
-
-    let reviews = [];
-    let reports = [];
-
-    if (userRole === 'Administrator') {
-      reviews = dataStore.reviewQueue;
-      reports = dataStore.reports || [];
-    } else if (userRole === 'Faculty') {
-      reviews = dataStore.reviewQueue.filter(r => r.faculty && r.faculty.toLowerCase() === userName.toLowerCase());
-      reports = (dataStore.reports || []).filter(rep => rep.assignedFaculty && rep.assignedFaculty.toLowerCase() === userName.toLowerCase());
-    } else {
-      reviews = dataStore.reviewQueue.filter(r => r.author && r.author.toLowerCase() === userName.toLowerCase());
-    }
-
-    return res.json({ success: true, reviews, reports });
+    const queueData = await reviewService.getReviewQueue(req.user);
+    return res.json({
+      success: true,
+      reviews: queueData.reviews,
+      reports: queueData.reports
+    });
   } catch (err) {
+    console.error('getReviews error:', err);
     return res.status(500).json({ success: false, message: err.message });
   }
 };
 
-exports.reviewAction = (req, res) => {
+exports.reviewAction = async (req, res) => {
   try {
-    const { id, approve, feedback } = req.body;
-    const r = dataStore.reviewQueue.find(x => x.id === parseInt(id));
+    const { id, approve, decision, rejectionReason, feedback } = req.body;
+    const subId = parseInt(id);
 
-    if (!r) {
-      return res.status(404).json({ success: false, message: 'Review item not found' });
-    }
+    // Check if this is an enhancement review item
+    const enhancementItem = dataStore.reviewQueue.find(x => x.id === subId && x.isEnhancement);
 
-    dataStore.reviewQueue = dataStore.reviewQueue.filter(x => x.id !== parseInt(id));
-    const authorUser = dataStore.users.find(u => u.name === r.author);
-    const facultyUser = dataStore.users.find(u => u.name === req.user.name);
+    if (enhancementItem) {
+      dataStore.reviewQueue = dataStore.reviewQueue.filter(x => x.id !== subId);
+      const proj = dataStore.projects.find(p => p.id === enhancementItem.projectId);
+      const authorUser = dataStore.users.find(u => u.name === enhancementItem.author);
 
-    if (r.isEnhancement) {
-      const proj = dataStore.projects.find(p => p.id === r.projectId);
       if (approve) {
         if (proj) {
           proj.enhancements = proj.enhancements || [];
           proj.enhancements.push({
-            title: r.enhancementTitle,
-            details: r.details + (feedback ? ` | Faculty Note: ${feedback}` : ''),
-            author: r.author
+            title: enhancementItem.enhancementTitle,
+            details: enhancementItem.details + (feedback ? ` | Faculty Note: ${feedback}` : ''),
+            author: enhancementItem.author
           });
 
           const ownerUser = dataStore.users.find(u => u.name === proj.author);
@@ -54,7 +43,7 @@ exports.reviewAction = (req, res) => {
             ownerUser.creditHistory = ownerUser.creditHistory || [];
             ownerUser.creditHistory.unshift({
               id: Date.now(),
-              title: `Project Enhanced: "${proj.title}" by ${r.author}`,
+              title: `Project Enhanced: "${proj.title}" by ${enhancementItem.author}`,
               points: 10,
               date: new Date().toISOString().split('T')[0],
               type: 'enhancement'
@@ -63,28 +52,29 @@ exports.reviewAction = (req, res) => {
               id: dataStore.notifications.length + 1,
               email: ownerUser.email,
               icon: 'award',
-              text: `Your project "${proj.title}" was enhanced by ${r.author}. +10 credits awarded.${feedback ? ` Faculty Note: "${feedback}"` : ''}`,
+              text: `Your project "${proj.title}" was enhanced by ${enhancementItem.author}. +10 credits awarded.${feedback ? ` Faculty Note: "${feedback}"` : ''}`,
               time: 'Just now'
             });
           }
-          if (authorUser) {
-            authorUser.credits = (authorUser.credits || 0) + 10;
-            authorUser.creditHistory = authorUser.creditHistory || [];
-            authorUser.creditHistory.unshift({
-              id: Date.now() + 1,
-              title: `Approved Enhancement on "${proj.title}"`,
-              points: 10,
-              date: new Date().toISOString().split('T')[0],
-              type: 'enhancement'
-            });
-            dataStore.notifications.unshift({
-              id: dataStore.notifications.length + 1,
-              email: authorUser.email,
-              icon: 'award',
-              text: `Your enhancement on "${proj.title}" was approved. +10 credits awarded.${feedback ? ` Faculty Note: "${feedback}"` : ''}`,
-              time: 'Just now'
-            });
-          }
+        }
+
+        if (authorUser) {
+          authorUser.credits = (authorUser.credits || 0) + 10;
+          authorUser.creditHistory = authorUser.creditHistory || [];
+          authorUser.creditHistory.unshift({
+            id: Date.now() + 1,
+            title: `Approved Enhancement on "${proj ? proj.title : 'Project'}"`,
+            points: 10,
+            date: new Date().toISOString().split('T')[0],
+            type: 'enhancement'
+          });
+          dataStore.notifications.unshift({
+            id: dataStore.notifications.length + 1,
+            email: authorUser.email,
+            icon: 'award',
+            text: `Your enhancement was approved. +10 credits awarded.${feedback ? ` Faculty Note: "${feedback}"` : ''}`,
+            time: 'Just now'
+          });
         }
         return res.json({ success: true, message: 'Enhancement approved! +10 credits awarded' });
       } else {
@@ -99,71 +89,37 @@ exports.reviewAction = (req, res) => {
         }
         return res.json({ success: true, message: 'Enhancement rejected' });
       }
-    } else {
-      const proj = dataStore.projects.find(p => p.id === parseInt(id));
-      const credits = (r.type === 'External') ? 20 : 15;
-
-      if (approve) {
-        if (proj) {
-          proj.status = 'Approved';
-          if (feedback) {
-            proj.comments = proj.comments || [];
-            proj.comments.push({
-              id: Date.now(),
-              author: req.user.name,
-              text: `Faculty Review Feedback: ${feedback}`,
-              time: 'Just now'
-            });
-          }
-        }
-        if (authorUser) {
-          authorUser.credits = (authorUser.credits || 0) + credits;
-          authorUser.approved_projects = (authorUser.approved_projects || 0) + 1;
-          authorUser.creditHistory = authorUser.creditHistory || [];
-          authorUser.creditHistory.unshift({
-            id: Date.now(),
-            title: `Project Approved: "${r.title}"`,
-            points: credits,
-            date: new Date().toISOString().split('T')[0],
-            type: 'approval'
-          });
-          dataStore.notifications.unshift({
-            id: dataStore.notifications.length + 1,
-            email: authorUser.email,
-            icon: 'star',
-            text: `Your project "${r.title}" was approved! +${credits} credits awarded.${feedback ? ` Faculty Feedback: "${feedback}"` : ''}`,
-            time: 'Just now',
-            route: '/profile'
-          });
-        }
-        return res.json({ success: true, message: `${r.title} approved — +${credits} credits awarded to ${r.author}` });
-      } else {
-        if (proj) {
-          proj.status = 'Changes Requested';
-          if (feedback) {
-            proj.comments = proj.comments || [];
-            proj.comments.push({
-              id: Date.now(),
-              author: req.user.name,
-              text: `Faculty Review Feedback (Changes Requested): ${feedback}`,
-              time: 'Just now'
-            });
-          }
-        }
-        if (authorUser) {
-          dataStore.notifications.unshift({
-            id: dataStore.notifications.length + 1,
-            email: authorUser.email,
-            icon: 'x',
-            text: `Your project "${r.title}" needs changes.${feedback ? ` Feedback: "${feedback}"` : ''}`,
-            time: 'Just now',
-            route: '/projects'
-          });
-        }
-        return res.json({ success: true, message: `${r.title} sent back for changes with feedback` });
-      }
     }
+
+    // Standard Project Submission Decision
+    // Map approve boolean or explicit decision string
+    let finalDecision = decision;
+    if (!finalDecision) {
+      finalDecision = approve ? 'Approved' : 'Changes Requested';
+    }
+
+    const result = await reviewService.recordDecision({
+      id: subId,
+      reviewerUser: req.user,
+      decision: finalDecision,
+      rejectionReason: rejectionReason || (finalDecision === 'Rejected' ? 'Academic standards or originality conflict' : ''),
+      feedback: feedback || ''
+    });
+
+    return res.json(result);
   } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
+    console.error('reviewAction error:', err);
+    return res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.getReviewHistory = async (req, res) => {
+  try {
+    const submissionId = parseInt(req.params.submissionId);
+    const history = await reviewService.getReviewHistory(submissionId, req.user);
+    return res.json({ success: true, history });
+  } catch (err) {
+    const status = err.message.includes('Forbidden') ? 403 : 404;
+    return res.status(status).json({ success: false, message: err.message });
   }
 };

@@ -134,7 +134,7 @@ export default function DashboardPage() {
         <div className="dash-grid">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <h3 style={{ margin: 0, fontSize: '17px', color: '#fff' }}>Awaiting your review</h3>
+              <h3 style={{ margin: 0, fontSize: '17px', color: 'var(--text)' }}>Awaiting your review</h3>
               <a onClick={() => navigate('/reviews')} style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--accent)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 Open Reviews <Icon name="arrow" size={14} />
               </a>
@@ -148,7 +148,7 @@ export default function DashboardPage() {
                   <tbody>
                     {reviews.slice(0, 4).map((r) => (
                       <tr key={r.id}>
-                        <td style={{ fontWeight: 600, color: '#fff' }}>{r.isEnhancement ? `Enhancement: ${r.enhancementTitle}` : r.title}</td>
+                        <td style={{ fontWeight: 600, color: 'var(--text)' }}>{r.isEnhancement ? `Enhancement: ${r.enhancementTitle}` : r.title}</td>
                         <td>{r.author}</td>
                         <td style={{ color: 'var(--muted)' }}>{r.category}</td>
                         <td><span className="badge badge-gray">{r.type}</span></td>
@@ -168,7 +168,7 @@ export default function DashboardPage() {
 
           <div>
             <div className="card" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: '#fff' }}>New guide requests</h3>
+              <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: 'var(--text)' }}>New guide requests</h3>
               {guideReqs.length ? guideReqs.map((g) => (
                 <div key={g.id} className="notif-item">
                   <div className="notif-icon"><Icon name="chat" size={15} /></div>
@@ -235,7 +235,7 @@ export default function DashboardPage() {
         {/* WORKLOAD & CATEGORY CHARTS ROW */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
           <div className="card" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <h3 style={{ margin: '0 0 14px', fontSize: '16px', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: '16px', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Icon name="usercog" size={16} /> Faculty Review Load & Domain Capacities
             </h3>
             <div style={{ fontSize: '13px', color: 'var(--muted)', marginBottom: '12px' }}>
@@ -253,7 +253,7 @@ export default function DashboardPage() {
                     { name: 'Dr. Thenmozhi K', specializations: ['Mobile Development', 'Internet of Things'], maxPendingThreshold: 10 }
                   ]).map((f, idx) => (
                     <tr key={idx}>
-                      <td style={{ fontWeight: 600, color: '#fff' }}>{f.name}</td>
+                      <td style={{ fontWeight: 600, color: 'var(--text)' }}>{f.name}</td>
                       <td style={{ color: 'var(--muted)' }}>{(f.specializations || []).join(', ')}</td>
                       <td>
                         <span className="badge badge-gray" style={{ color: '#38bdf8' }}>
@@ -268,7 +268,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="card" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <h3 style={{ margin: '0 0 14px', fontSize: '16px', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: '16px', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Icon name="chart" size={16} /> Project Submissions by Domain
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
@@ -296,7 +296,7 @@ export default function DashboardPage() {
         {/* RECENT SUBMISSIONS & SYSTEM NOTIFICATIONS */}
         <div className="dash-grid">
           <div>
-            <h3 style={{ margin: '0 0 14px', fontSize: '17px', color: '#fff' }}>Recent Platform Submissions</h3>
+            <h3 style={{ margin: '0 0 14px', fontSize: '17px', color: 'var(--text)' }}>Recent Platform Submissions</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: '16px' }}>
               {recentProjects.map((p) => (
                 <div key={p.id} className="card proj-card" onClick={() => navigate('/projects')}>
@@ -311,7 +311,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="card" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: '#fff' }}>System Governance Feed</h3>
+            <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: 'var(--text)' }}>System Governance Feed</h3>
             {notifications.slice(0, 4).map((n) => (
               <div key={n.id} className="notif-item" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onClick={() => handleNotificationClick(n)}>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
@@ -413,7 +413,9 @@ export default function DashboardPage() {
             </div>
             <div style={{ fontSize: '12.5px', color: 'var(--muted)', marginTop: '10px' }}>
               {!meetsProjectFloor ? (
-                <span style={{ color: '#f43f5e' }}>⚠️ You must have at least 3 approved projects to unlock repositories.</span>
+                <span style={{ color: '#f43f5e', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Icon name="alert" size={13} /> You must have at least 3 approved projects to unlock repositories.
+                </span>
               ) : nextTier ? (
                 `You need ${nextTier.min} credits to unlock ${nextTier.label}. You are ${nextTier.min - credits} credits away.`
               ) : (
@@ -424,7 +426,7 @@ export default function DashboardPage() {
           <div className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--gray-bg)', border: 'none', boxShadow: 'none' }}>
             <Icon name="trend" size={18} />
             <div>
-              <div style={{ fontWeight: 700, fontSize: '15px', color: '#fff' }}>{credits}{nextTier ? ` / ${nextTier.min}` : ''}</div>
+              <div style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text)' }}>{credits}{nextTier ? ` / ${nextTier.min}` : ''}</div>
               <div style={{ fontSize: '11px', color: 'var(--muted)' }}>credits {nextTier ? 'for next tier' : '— max tier'}</div>
             </div>
           </div>
@@ -446,7 +448,7 @@ export default function DashboardPage() {
       <div className="dash-grid">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <h3 style={{ margin: 0, fontSize: '17px', color: '#fff' }}>Recent Projects</h3>
+            <h3 style={{ margin: 0, fontSize: '17px', color: 'var(--text)' }}>Recent Projects</h3>
             <a onClick={() => navigate('/projects')} style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
               View all <Icon name="arrow" size={14} />
             </a>
@@ -472,7 +474,7 @@ export default function DashboardPage() {
 
         <div>
           <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: '#fff' }}>Notifications</h3>
+            <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: 'var(--text)' }}>Notifications</h3>
             {notifications.length ? notifications.slice(0, 3).map((n) => (
               <div key={n.id} className="notif-item" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onClick={() => handleNotificationClick(n)}>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
@@ -492,7 +494,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="card" style={{ padding: '20px' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: '#fff' }}>Leaderboard</h3>
+            <h3 style={{ margin: '0 0 10px', fontSize: '16px', color: 'var(--text)' }}>Leaderboard</h3>
             {leaderboard.slice(0, 4).map((s) => (
               <div key={s.rank} className="lb-row">
                 <div className={`lb-badge ${s.rank === 1 ? 'gold' : ''}`}>{s.rank}</div>
@@ -500,7 +502,7 @@ export default function DashboardPage() {
                   {s.name}
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff' }}>{s.credits}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text)' }}>{s.credits}</div>
                   <div style={{ fontSize: '10.5px', color: 'var(--muted-2)' }}>{s.projects} projects</div>
                 </div>
               </div>

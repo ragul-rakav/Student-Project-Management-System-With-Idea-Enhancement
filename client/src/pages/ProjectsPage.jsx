@@ -6,6 +6,8 @@ import api from '../services/api';
 import Icon from '../components/common/Icons';
 import { BadgeType, BadgeStatus } from '../components/common/Badge';
 import { EmptyState } from '../components/common/Toast';
+import RandomFillButton from '../components/common/RandomFillButton';
+import { getRandomProject, getRandomEnhancement, getRandomReport } from '../utils/mockDataGenerator';
 
 const accessTiers = [
   { min: 0, label: 'No Repository Access' },
@@ -51,6 +53,16 @@ export default function ProjectsPage() {
   const [demo, setDemo] = useState('');
   const [vercel, setVercel] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
+
+  // Detailed ProjectPulse academic submission fields
+  const [problemStatement, setProblemStatement] = useState('');
+  const [objectives, setObjectives] = useState('');
+  const [methodology, setMethodology] = useState('');
+
+  // AI Originality Pre-check state
+  const [checkingOriginality, setCheckingOriginality] = useState(false);
+  const [originalityReport, setOriginalityReport] = useState(null);
+  const [appliedEnhancementIds, setAppliedEnhancementIds] = useState([]);
 
   // Inline URL errors
   const [urlErrors, setUrlErrors] = useState({});
@@ -178,8 +190,107 @@ export default function ProjectsPage() {
     }
   };
 
+  const handleCheckOriginality = async () => {
+    if (!title.trim() && !abstract.trim()) {
+      showToast('Please provide a project title and abstract before running originality check.');
+      return;
+    }
+    setCheckingOriginality(true);
+    try {
+      const res = await api.post('/similarity/check', {
+        title,
+        abstract,
+        tech,
+        category,
+        problem_statement: problemStatement,
+        objectives,
+        methodology
+      });
+      if (res.data.success) {
+        setOriginalityReport(res.data.report);
+        showToast(`Originality analysis complete: ${res.data.report.originalityScore}% Original`);
+      }
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Originality check failed');
+    } finally {
+      setCheckingOriginality(false);
+    }
+  };
+
+  const handleAutoFillProject = () => {
+    const mock = getRandomProject();
+    setTitle(mock.title);
+    setCategory(mock.category);
+    setTech(mock.tech);
+    setAbstract(mock.abstract);
+    setProblemStatement(mock.problemStatement);
+    setObjectives(mock.objectives);
+    setMethodology(mock.methodology);
+    setGithub(mock.github);
+    setDoc(mock.doc);
+    setPpt(mock.ppt);
+    setDemo(mock.demo);
+    setVercel(mock.vercel);
+    setOriginalityReport(null);
+    setAppliedEnhancementIds([]);
+    showToast('Auto-filled form with realistic academic project data!');
+  };
+
+  const handleAutoFillReport = () => {
+    const mock = getRandomReport();
+    setReportCategory(mock.category);
+    setReportReason(mock.reason);
+    showToast('Auto-filled violation report form!');
+  };
+
+  const handleAutoFillEnhancement = () => {
+    const mock = getRandomEnhancement();
+    setEnhTitle(mock.title);
+    setEnhDetails(mock.details);
+    setEnhLink(mock.link);
+    showToast('Auto-filled enhancement proposal form!');
+  };
+
+  const handleApplyEnhancementSuggestion = (suggestion) => {
+    setAppliedEnhancementIds(prev => [...prev, suggestion.id]);
+    if (suggestion.techAddition) {
+      setTech(prev => {
+        const currentList = prev ? prev.split(',').map(s => s.trim().toLowerCase()) : [];
+        const additions = suggestion.techAddition.split(',').map(s => s.trim()).filter(Boolean);
+        const newToAdd = additions.filter(a => !currentList.includes(a.toLowerCase()));
+        if (newToAdd.length === 0) return prev;
+        return prev ? `${prev}, ${newToAdd.join(', ')}` : newToAdd.join(', ');
+      });
+    }
+    const extSnippet = `\n[Novel Enhancement: ${suggestion.title}. ${suggestion.description}]`;
+    setAbstract(prev => prev.includes(suggestion.title) ? prev : prev + extSnippet);
+    if (methodology) {
+      setMethodology(prev => prev.includes(suggestion.title) ? prev : `${prev}\nNovelty Implementation: ${suggestion.description}`);
+    } else {
+      setMethodology(`Novelty Implementation: ${suggestion.description}`);
+    }
+    // Filter out applied enhancement immediately from current report
+    setOriginalityReport(prev => {
+      if (!prev) return null;
+      const recs = prev.enhancementSuggestions?.recommendations || [];
+      return {
+        ...prev,
+        enhancementSuggestions: {
+          ...prev.enhancementSuggestions,
+          recommendations: recs.filter(r => r.id !== suggestion.id)
+        }
+      };
+    });
+    showToast(`Applied: "${suggestion.title}". Re-check originality to verify new score.`);
+  };
+
   const handleSubmitProject = async (e) => {
     e.preventDefault();
+
+    if (originalityReport && (originalityReport.originalityScore < 20 || originalityReport.isDirectDuplicate)) {
+      showToast('Submission blocked: Originality score is below the 20% required threshold. Please use the AI Idea Enhancement recommendations to differentiate your project.');
+      return;
+    }
 
     if (category === 'Other' && !customDomainName.trim()) {
       showToast('Please specify your proposed custom domain name.');
@@ -209,6 +320,9 @@ export default function ProjectsPage() {
       formData.append('customDomainName', customDomainName);
       formData.append('tech', tech);
       formData.append('abstract', abstract);
+      formData.append('problemStatement', problemStatement);
+      formData.append('objectives', objectives);
+      formData.append('methodology', methodology);
       formData.append('github', github);
       formData.append('doc', doc);
       formData.append('ppt', ppt);
@@ -232,14 +346,30 @@ export default function ProjectsPage() {
         fetchProjects();
       }
     } catch (err) {
-      showToast(err.response?.data?.message || 'Submission failed');
+      if (err.response?.status === 409 || err.response?.data?.isDuplicate) {
+        if (err.response?.data?.matchedProjects) {
+          setOriginalityReport({
+            originalityScore: Math.max(0, 100 - (err.response.data.similarityScore || 90)),
+            similarityScore: err.response.data.similarityScore || 90,
+            riskLevel: 'Critical (Duplicate Blocked)',
+            isDirectDuplicate: true,
+            matchedProjects: err.response.data.matchedProjects
+          });
+        }
+        showToast(err.response?.data?.message || 'Direct duplicate project blocked by platform policy.');
+      } else {
+        showToast(err.response?.data?.message || 'Submission failed');
+      }
     }
   };
 
   const resetSubmitForm = () => {
-    setTitle(''); setCategory('Machine Learning'); setCustomDomainName(''); setTech(''); setAbstract(''); setGithub('');
-    setDoc(''); setPpt(''); setCert(''); setDemo(''); setVercel(''); setSelectedFiles([]); setUrlErrors({});
+    setTitle(''); setCategory('Machine Learning'); setCustomDomainName(''); setTech(''); setAbstract('');
+    setProblemStatement(''); setObjectives(''); setMethodology('');
+    setGithub(''); setDoc(''); setPpt(''); setCert(''); setDemo(''); setVercel('');
+    setSelectedFiles([]); setUrlErrors({}); setOriginalityReport(null); setCheckingOriginality(false);
   };
+
 
   const handleOpenReportModal = (e) => {
     e.stopPropagation();
@@ -454,8 +584,8 @@ export default function ProjectsPage() {
                   <div className="proj-badges">
                     <BadgeType type={p.type} />
                     {isDomainPending ? (
-                      <span className="badge badge-warning" style={{ background: 'rgba(245,158,11,0.2)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)', fontSize: '10.5px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', padding: '2px 8px', borderRadius: '12px', height: '22px' }}>
-                        ⏳ Domain Approval Pending
+                      <span className="badge badge-warning" style={{ background: 'rgba(245,158,11,0.2)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)', fontSize: '10.5px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '2px 8px', borderRadius: '12px', height: '22px' }}>
+                        <Icon name="clock" size={11} /> Domain Approval Pending
                       </span>
                     ) : (
                       <BadgeStatus status={p.status} />
@@ -521,12 +651,15 @@ export default function ProjectsPage() {
       {/* MODAL: SUBMIT PROJECT */}
       {modal === 'submit' && (
         <div className="overlay" onClick={(e) => e.target === e.currentTarget && setModal(null)}>
-          <div className="modal" style={{ width: '500px', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3>Submit Project</h3>
+          <div className="modal" style={{ width: '560px', maxWidth: '95%', maxHeight: '92vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <h3 style={{ margin: 0 }}>Submit Project</h3>
+              <RandomFillButton onFill={handleAutoFillProject} label="Test Auto-Fill" />
+            </div>
             <p className="hint">
               {submitType === 'Internal'
-                ? 'Internal academic projects are automatically assigned an eligible faculty reviewer based on domain expertise.'
-                : 'External projects send a guide request to an eligible faculty member in your domain.'}
+                ? 'Internal academic projects are automatically evaluated for originality and assigned to an eligible faculty reviewer.'
+                : 'External projects undergo similarity analysis and send a guide request to an eligible domain faculty member.'}
             </p>
             <div className="tabs" style={{ marginBottom: '16px' }}>
               <div className={`tab ${submitType === 'Internal' ? 'active' : ''}`} onClick={() => setSubmitType('Internal')}>Internal Project</div>
@@ -539,12 +672,12 @@ export default function ProjectsPage() {
                 <label>Domain / Category</label>
                 <select
                   className="field"
-                  style={{ width: '100%', background: '#0f172a', color: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border)' }}
+                  style={{ width: '100%', background: 'var(--dropdown-bg)', color: 'var(--text)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border)' }}
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
                   {predefinedDomainList.map(d => (
-                    <option key={d} value={d} style={{ background: '#0f172a', color: '#fff' }}>{d}</option>
+                    <option key={d} value={d}>{d}</option>
                   ))}
                 </select>
               </div>
@@ -565,44 +698,264 @@ export default function ProjectsPage() {
               )}
 
               <div className="field"><label>Technologies (comma separated)</label><input required value={tech} onChange={(e) => setTech(e.target.value)} placeholder="e.g. React, Python, Flask" /></div>
-              <div className="field"><label>Abstract</label><textarea required rows="2" value={abstract} onChange={(e) => setAbstract(e.target.value)} placeholder="Short summary of the project"></textarea></div>
+              <div className="field"><label>Abstract</label><textarea required rows="3" value={abstract} onChange={(e) => setAbstract(e.target.value)} placeholder="Comprehensive summary of project objectives, scope, and technical deliverables"></textarea></div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="field">
+                  <label>Problem Statement (Optional)</label>
+                  <textarea rows="2" value={problemStatement} onChange={(e) => setProblemStatement(e.target.value)} placeholder="Target problem or industry challenge being addressed"></textarea>
+                </div>
+                <div className="field">
+                  <label>Objectives (Optional)</label>
+                  <textarea rows="2" value={objectives} onChange={(e) => setObjectives(e.target.value)} placeholder="Core technical goals and deliverables"></textarea>
+                </div>
+              </div>
+
+              <div className="field">
+                <label>Methodology & System Architecture (Optional)</label>
+                <textarea rows="2" value={methodology} onChange={(e) => setMethodology(e.target.value)} placeholder="Hardware, algorithmic approach, database schema, or design flow"></textarea>
+              </div>
+
+              {/* LIVE AI ORIGINALITY PRE-CHECK ASSISTANT */}
+              <div style={{
+                background: 'rgba(99, 102, 241, 0.05)',
+                border: '1px solid rgba(99, 102, 241, 0.25)',
+                borderRadius: '12px',
+                padding: '14px 16px',
+                marginBottom: '16px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent)', fontWeight: 600, fontSize: '13.5px' }}>
+                    <Icon name="chart" size={16} /> AI Originality Pre-Check & Idea Assistant
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    style={{ borderColor: 'rgba(99, 102, 241, 0.5)', color: 'var(--accent)', fontSize: '12px' }}
+                    onClick={handleCheckOriginality}
+                    disabled={checkingOriginality}
+                  >
+                    {checkingOriginality ? 'Analyzing Vector Similarity...' : 'Pre-Check Originality'}
+                  </button>
+                </div>
+
+                {originalityReport && (
+                  <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text)' }}>
+                        Originality Score: <b>{originalityReport.originalityScore}%</b>
+                        <span style={{ fontSize: '11.5px', color: 'var(--muted)', fontWeight: 400, marginLeft: '6px' }}>
+                          ({originalityReport.similarityScore}% similarity)
+                        </span>
+                      </span>
+                      <span className={`badge ${originalityReport.originalityScore >= 75 ? 'badge-green' : originalityReport.originalityScore >= 45 ? 'badge-amber' : 'badge-red'}`}>
+                        {originalityReport.riskLevel}
+                      </span>
+                    </div>
+
+                    <div style={{ width: '100%', height: '8px', background: 'var(--gray-bg)', borderRadius: '4px', overflow: 'hidden', marginBottom: '10px' }}>
+                      <div style={{
+                        width: `${originalityReport.originalityScore}%`,
+                        height: '100%',
+                        background: originalityReport.originalityScore >= 75 ? '#10b981' : originalityReport.originalityScore >= 45 ? '#f59e0b' : '#ef4444',
+                        transition: 'width 0.4s ease'
+                      }}></div>
+                    </div>
+
+                    {/* BLOCKED SUBMISSION WARNING */}
+                    {(originalityReport.originalityScore < 20 || originalityReport.isDirectDuplicate) && (
+                      <div style={{
+                        fontSize: '12.5px',
+                        color: '#f87171',
+                        background: 'rgba(239, 68, 68, 0.12)',
+                        border: '1px solid rgba(239, 68, 68, 0.35)',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        marginBottom: '10px',
+                        lineHeight: 1.45
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, marginBottom: '2px' }}>
+                          <Icon name="alert" size={14} /> SUBMISSION BLOCKED
+                        </div>
+                        Originality score is critically low ({originalityReport.originalityScore}% original, minimum platform requirement is 20%). Submitting identical or near-duplicate proposals is prohibited. Please adopt the dynamic idea enhancement recommendations below to differentiate your project.
+                      </div>
+                    )}
+
+                    {originalityReport.isResubmissionOfRejected && (
+                      <div style={{ fontSize: '12px', color: '#fbbf24', background: 'rgba(251, 191, 36, 0.1)', border: '1px solid rgba(251, 191, 36, 0.25)', padding: '8px 10px', borderRadius: '6px', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Icon name="alert" size={14} />
+                        <span><b>Resubmission Alert:</b> High similarity to a previously rejected project detected. Faculty review will inspect historical reasons and prior comments.</span>
+                      </div>
+                    )}
+
+                    {originalityReport.matchedProjects && originalityReport.matchedProjects.length > 0 && (
+                      <div style={{ fontSize: '11.5px', color: 'var(--muted)', marginTop: '4px' }}>
+                        Closest match in repository: <b>{originalityReport.matchedProjects[0].title}</b> ({originalityReport.matchedProjects[0].similarityScore}% match)
+                      </div>
+                    )}
+
+                    {/* SIMPLIFIED ON-POINT PATENTABILITY ASSESSMENT WITH GOOGLE PATENTS */}
+                    {originalityReport.patentability && (
+                      <div className="patentability-panel" style={{ marginTop: '12px', border: '1px solid var(--border)' }}>
+                        <div className="patentability-header">
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Icon name="shield" size={15} />
+                            <span style={{ fontWeight: 600, fontSize: '13px', color: 'var(--text)' }}>
+                              Patentability &amp; Prior Art Check
+                            </span>
+                          </div>
+                          <span className={`badge ${originalityReport.patentability.isPatentable ? 'badge-green' : 'badge-amber'}`} style={{ fontSize: '11px' }}>
+                            {originalityReport.patentability.status}
+                          </span>
+                        </div>
+
+                        {/* Punchy Simplified Verdict */}
+                        <div style={{ fontSize: '12.5px', color: 'var(--text-dim)', marginTop: '6px', lineHeight: 1.45 }}>
+                          <b>Verdict:</b> {originalityReport.patentability.verdict || originalityReport.patentability.primaryReason || originalityReport.patentability.status}
+                        </div>
+
+                        {/* Google Patents & External Prior Art Box */}
+                        {originalityReport.patentability.externalPriorArt && (
+                          <div className={`external-prior-art-box ${originalityReport.patentability.externalPriorArt.hasConflict ? 'has-conflict' : 'clean-clearance'}`}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                              <span style={{
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                color: originalityReport.patentability.externalPriorArt.hasConflict ? '#f59e0b' : '#10b981',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                              }}>
+                                <Icon name={originalityReport.patentability.externalPriorArt.hasConflict ? 'alert' : 'check'} size={14} />
+                                {originalityReport.patentability.externalPriorArt.hasConflict
+                                  ? 'Conflicting Prior Art Found on Google Patents'
+                                  : 'Global Prior Art Clearance Confirmed'}
+                              </span>
+                              <span style={{ fontSize: '11px', color: 'var(--muted)' }}>
+                                {originalityReport.patentability.externalPriorArt.similarityScore}% Overlap
+                              </span>
+                            </div>
+
+                            {originalityReport.patentability.externalPriorArt.hasConflict ? (
+                              <div style={{ marginTop: '4px' }}>
+                                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text)' }}>
+                                  {originalityReport.patentability.externalPriorArt.conflictingTitle}
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>
+                                  ID: <b>{originalityReport.patentability.externalPriorArt.conflictingId}</b> &middot; Assignee: {originalityReport.patentability.externalPriorArt.assignee}
+                                </div>
+                                <div style={{ fontSize: '11.5px', color: 'var(--muted-2)', marginTop: '4px', lineHeight: 1.4 }}>
+                                  {originalityReport.patentability.externalPriorArt.summary}
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ fontSize: '11.5px', color: 'var(--muted)', marginTop: '2px' }}>
+                                {originalityReport.patentability.externalPriorArt.summary}
+                              </div>
+                            )}
+
+                            <a
+                              href={originalityReport.patentability.externalPriorArt.googlePatentsUrl || `https://patents.google.com/?q=${encodeURIComponent(title)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="external-patent-link"
+                            >
+                              <Icon name="externalLink" size={13} />
+                              {originalityReport.patentability.externalPriorArt.hasConflict
+                                ? 'View Conflicting Invention on Google Patents'
+                                : 'Verify Search on Google Patents'}
+                            </a>
+                          </div>
+                        )}
+
+                        {/* 1 or 2 concise engineering recommendations if not patentable */}
+                        {!originalityReport.patentability.isPatentable && originalityReport.patentability.recommendations?.length > 0 && (
+                          <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '8px' }}>
+                            <div style={{ fontSize: '11.5px', fontWeight: 600, color: '#fbbf24', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                              <Icon name="lightbulb" size={13} /> Key Requirements to Achieve Patent Eligibility:
+                            </div>
+                            <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '11.5px', color: 'var(--muted)', lineHeight: 1.45 }}>
+                              {originalityReport.patentability.recommendations.slice(0, 2).map((rec, rIdx) => (
+                                <li key={rIdx}>{rec}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* DYNAMIC IDEA ENHANCEMENT SUGGESTIONS - SHOWN ONLY IF ORIGINALITY < 60% OR DUPLICATE */}
+                    {((originalityReport.originalityScore < 60 || originalityReport.isDirectDuplicate) &&
+                      (originalityReport.enhancementSuggestions?.recommendations || []).filter(sug => !appliedEnhancementIds.includes(sug.id)).length > 0) && (
+                      <div className="novelty-enhancement-box">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#818cf8', fontWeight: 700, fontSize: '13px', marginBottom: '4px' }}>
+                          <Icon name="sparkle" size={14} /> AI Idea Enhancement Suggestions
+                        </div>
+                        <div style={{ fontSize: '11.5px', color: 'var(--muted)', marginBottom: '8px' }}>
+                          Elevate your project's originality above the 20% required threshold by incorporating these technical additions:
+                        </div>
+
+                        {(originalityReport.enhancementSuggestions.recommendations)
+                          .filter(sug => !appliedEnhancementIds.includes(sug.id))
+                          .map((sug) => (
+                            <div key={sug.id} className="novelty-suggestion-card">
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
+                                <span style={{ fontWeight: 600, fontSize: '12.5px', color: 'var(--text)' }}>{sug.title}</span>
+                                <span className="badge badge-amber" style={{ fontSize: '10px' }}>{sug.type}</span>
+                              </div>
+                              <p style={{ fontSize: '11.5px', color: 'var(--muted)', margin: '0 0 6px', lineHeight: 1.45 }}>{sug.description}</p>
+                              <button
+                                type="button"
+                                className="btn btn-outline btn-sm"
+                                style={{ fontSize: '11px', padding: '3px 8px', color: 'var(--accent)', borderColor: 'rgba(99, 102, 241, 0.4)' }}
+                                onClick={() => handleApplyEnhancementSuggestion(sug)}
+                              >
+                                <Icon name="sparkle" size={11} /> Apply Enhancement
+                              </button>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="field">
                 <label>GitHub repository</label>
                 <input value={github} onChange={(e) => { setGithub(e.target.value); if (urlErrors.github) setUrlErrors(prev => ({ ...prev, github: '' })); }} placeholder="https://github.com/..." />
-                {urlErrors.github && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600 }}>⚠️ {urlErrors.github}</div>}
+                {urlErrors.github && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Icon name="alert" size={12} /> {urlErrors.github}</div>}
               </div>
 
               <div className="field">
                 <label>Documentation link</label>
                 <input value={doc} onChange={(e) => { setDoc(e.target.value); if (urlErrors.doc) setUrlErrors(prev => ({ ...prev, doc: '' })); }} placeholder="Link to report / docs" />
-                {urlErrors.doc && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600 }}>⚠️ {urlErrors.doc}</div>}
+                {urlErrors.doc && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Icon name="alert" size={12} /> {urlErrors.doc}</div>}
               </div>
 
               {submitType === 'Internal' ? (
                 <div className="field">
                   <label>PPT link</label>
                   <input value={ppt} onChange={(e) => { setPpt(e.target.value); if (urlErrors.ppt) setUrlErrors(prev => ({ ...prev, ppt: '' })); }} placeholder="Link to presentation" />
-                  {urlErrors.ppt && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600 }}>⚠️ {urlErrors.ppt}</div>}
+                  {urlErrors.ppt && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Icon name="alert" size={12} /> {urlErrors.ppt}</div>}
                 </div>
               ) : (
                 <div className="field">
                   <label>Certificate (optional)</label>
                   <input value={cert} onChange={(e) => { setCert(e.target.value); if (urlErrors.cert) setUrlErrors(prev => ({ ...prev, cert: '' })); }} placeholder="Link to certificate" />
-                  {urlErrors.cert && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600 }}>⚠️ {urlErrors.cert}</div>}
+                  {urlErrors.cert && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Icon name="alert" size={12} /> {urlErrors.cert}</div>}
                 </div>
               )}
 
               <div className="field">
                 <label>Demo video (optional)</label>
                 <input value={demo} onChange={(e) => { setDemo(e.target.value); if (urlErrors.demo) setUrlErrors(prev => ({ ...prev, demo: '' })); }} placeholder="YouTube / Drive link" />
-                {urlErrors.demo && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600 }}>⚠️ {urlErrors.demo}</div>}
+                {urlErrors.demo && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Icon name="alert" size={12} /> {urlErrors.demo}</div>}
               </div>
 
               <div className="field">
                 <label>Vercel link (optional)</label>
                 <input value={vercel} onChange={(e) => { setVercel(e.target.value); if (urlErrors.vercel) setUrlErrors(prev => ({ ...prev, vercel: '' })); }} placeholder="https://your-app.vercel.app" />
-                {urlErrors.vercel && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600 }}>⚠️ {urlErrors.vercel}</div>}
+                {urlErrors.vercel && <div style={{ color: '#f43f5e', fontSize: '11.5px', marginTop: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Icon name="alert" size={12} /> {urlErrors.vercel}</div>}
               </div>
 
               <div className="field">
@@ -621,7 +974,28 @@ export default function ProjectsPage() {
 
               <div className="modal-actions">
                 <button type="button" className="btn btn-outline" onClick={() => setModal(null)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">{submitType === 'Internal' ? 'Submit for review' : 'Send guide request'}</button>
+                {/* SUBMISSION BUTTON - STRICTLY DISABLED IF ORIGINALITY < 20% */}
+                {(() => {
+                  const isBlocked = Boolean(originalityReport && (originalityReport.originalityScore < 20 || originalityReport.isDirectDuplicate));
+                  return (
+                    <button
+                      type="submit"
+                      disabled={isBlocked}
+                      className="btn btn-primary"
+                      style={isBlocked ? {
+                        background: '#ef4444',
+                        borderColor: '#dc2626',
+                        cursor: 'not-allowed',
+                        opacity: 0.8
+                      } : {}}
+                      title={isBlocked ? 'Submission blocked: Originality score too low (< 20%)' : undefined}
+                    >
+                      {isBlocked
+                        ? 'Submission Blocked (Originality < 20%)'
+                        : (submitType === 'Internal' ? 'Submit for review' : 'Send guide request')}
+                    </button>
+                  );
+                })()}
               </div>
             </form>
           </div>
@@ -632,9 +1006,12 @@ export default function ProjectsPage() {
       {modal === 'report' && selectedProject && (
         <div className="overlay" onClick={(e) => e.target === e.currentTarget && setModal(null)}>
           <div className="modal" style={{ width: '450px' }}>
-            <h3 style={{ color: '#f43f5e', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Icon name="bell" size={18} /> Report Project Violation
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <h3 style={{ color: '#f43f5e', display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                <Icon name="bell" size={18} /> Report Project Violation
+              </h3>
+              <RandomFillButton onFill={handleAutoFillReport} label="Test Fill" />
+            </div>
             <p className="hint">Submit details to platform administrators regarding "{selectedProject.title}".</p>
             <form onSubmit={handleSubmitReport}>
               <div className="field">
@@ -729,11 +1106,14 @@ export default function ProjectsPage() {
             <h3 style={{ marginBottom: '8px' }}>Repository Locked</h3>
             <p className="hint" style={{ marginBottom: '20px', lineHeight: 1.55 }}>
               Access to <b>{lockedInfo.type} Projects</b> requires a student to have:
-              <br />1. At least <b>3 approved projects</b> (You have: <b>{currentUser?.approved_projects || 0}</b> {(currentUser?.approved_projects || 0) >= 3 ? '✅' : '❌'})
-              <br />2. At least <b>{lockedInfo.req} credit points</b> (You have: <b>{currentUser?.credits || 0}</b> {(currentUser?.credits || 0) >= lockedInfo.req ? '✅' : '❌'})
+              <br />1. At least <b>3 approved projects</b> (You have: <b>{currentUser?.approved_projects || 0}</b> {(currentUser?.approved_projects || 0) >= 3 ? <span style={{ color: '#10b981', fontWeight: 600 }}>[Passed]</span> : <span style={{ color: '#ef4444', fontWeight: 600 }}>[Pending]</span>})
+              <br />2. At least <b>{lockedInfo.req} credit points</b> (You have: <b>{currentUser?.credits || 0}</b> {(currentUser?.credits || 0) >= lockedInfo.req ? <span style={{ color: '#10b981', fontWeight: 600 }}>[Passed]</span> : <span style={{ color: '#ef4444', fontWeight: 600 }}>[Pending]</span>})
             </p>
-            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', fontSize: '12.5px', color: 'var(--muted)', marginBottom: '20px', textAlign: 'left' }}>
-              💡 <b>How to unlock:</b> Submit projects for faculty review, publish project ideas, receive likes, or collaborate on enhancements.
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', fontSize: '12.5px', color: 'var(--muted)', marginBottom: '20px', textAlign: 'left', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+              <Icon name="lightbulb" size={15} style={{ color: '#fbbf24', marginTop: '2px' }} />
+              <div>
+                <b>How to unlock:</b> Submit projects for faculty review, publish project ideas, receive likes, or collaborate on enhancements.
+              </div>
             </div>
             <button type="button" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setModal(null)}>
               Understood
@@ -761,6 +1141,11 @@ export default function ProjectsPage() {
                       navigate(`/profile?name=${encodeURIComponent(selectedProject.author)}`);
                     }}
                   >{selectedProject.author}</span> &middot; {selectedProject.dept}
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '2px' }}>
+                  {currentUser?.role === 'Student'
+                    ? 'Faculty Review: Assigned [Blind Evaluation]'
+                    : (selectedProject.assignedFaculty ? `Faculty Assigned: ${selectedProject.assignedFaculty}` : 'Faculty: Unassigned')}
                 </div>
               </div>
               <button className="icon-btn" onClick={() => setModal(null)}><Icon name="x" size={20} /></button>
@@ -873,7 +1258,10 @@ export default function ProjectsPage() {
       {modal === 'enhancement' && selectedProject && (
         <div className="overlay" onClick={(e) => e.target === e.currentTarget && setModal(null)}>
           <div className="modal">
-            <h3>Submit Project Enhancement</h3>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <h3 style={{ margin: 0 }}>Submit Project Enhancement</h3>
+              <RandomFillButton onFill={handleAutoFillEnhancement} label="Test Fill" />
+            </div>
             <p className="hint">Propose code improvements on "{selectedProject.title}" for guide review.</p>
             <form onSubmit={handleSubmitEnhancement}>
               <div className="field"><label>Enhancement Title</label><input required value={enhTitle} onChange={(e) => setEnhTitle(e.target.value)} placeholder="e.g. Added face spoofing detection" /></div>

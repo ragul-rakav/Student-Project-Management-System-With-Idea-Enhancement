@@ -1,4 +1,6 @@
 const dataStore = require('../services/dataStore');
+const db = require('../config/db');
+const { similarityService } = require('../services/similarityService');
 
 function checkProjectAccess(p, currentUser) {
   if (!currentUser) return true;
@@ -78,10 +80,10 @@ exports.getProjects = (req, res) => {
     const total = list.length;
     const startIndex = (page - 1) * limit;
     const paginatedList = list.slice(startIndex, startIndex + limit).map(p => {
-      // Redact assignedFaculty for Students to maintain review privacy
+      // Redact real faculty name for Students to maintain blind review privacy
       const sanitized = { ...p };
       if (currentUser && currentUser.role === 'Student') {
-        delete sanitized.assignedFaculty;
+        sanitized.assignedFaculty = 'Assigned: Faculty Reviewer (Blind Evaluation)';
       }
       return sanitized;
     });
@@ -109,7 +111,7 @@ exports.getProjectById = (req, res) => {
     const currentUser = req.user ? dataStore.users.find(u => u.email.toLowerCase() === req.user.email.toLowerCase()) : null;
     const sanitized = { ...project };
     if (currentUser && currentUser.role === 'Student') {
-      delete sanitized.assignedFaculty;
+      sanitized.assignedFaculty = 'Assigned: Faculty Reviewer (Blind Evaluation)';
     }
     return res.json({ success: true, project: sanitized });
   } catch (err) {
@@ -126,9 +128,9 @@ function normalizeUrl(str) {
   return val;
 }
 
-exports.submitProject = (req, res) => {
+exports.submitProject = async (req, res) => {
   try {
-    const { title, category, customDomainName, tech, abstract, github, doc, ppt, cert, demo, vercel, type } = req.body;
+    const { title, category, customDomainName, tech, abstract, github, doc, ppt, cert, demo, vercel, type, problemStatement, objectives, methodology } = req.body;
     const user = dataStore.users.find(u => u.email.toLowerCase() === req.user.email.toLowerCase());
 
     if (!title || !category || !tech || !abstract || !type) {
@@ -157,39 +159,49 @@ exports.submitProject = (req, res) => {
     const isCustomDomain = (category === 'Other');
     const finalCategory = isCustomDomain ? `Other (${customDomainName || 'Custom Domain'})` : category;
 
-    // CUSTOM DOMAIN VERIFICATION FLOW
-    if (isCustomDomain) {
-      const newProj = {
-        id: newId,
-        type,
-        status: 'Domain Verification Pending',
-        domainStatus: 'Pending',
-        proposedDomain: customDomainName || 'Custom Domain',
-        title,
-        author: user ? user.name : 'Student',
-        dept: user ? user.dept : 'Computer Science',
-        category: finalCategory,
-        likes: 0,
-        commentsCount: 0,
-        views: 0,
-        clones: 0,
-        liked: false,
-        abstract,
-        github: normGithub,
-        doc: normDoc,
-        ppt: normPpt,
-        cert: normCert,
-        demo: normDemo,
-        vercel: normVercel,
-        tech: techArray,
-        collaborators: [],
-        assignedFaculty: 'Unassigned (Awaiting Domain Approval)',
-        comments: [],
-        enhancements: [],
-        files: uploadedFiles
-      };
+    // AI SIMILARITY & ORIGINALITY ANALYSIS
+    let originalityReport = {
+      originalityScore: 100.0,
+      similarityScore: 0.0,
+      riskLevel: 'Low',
+      isDirectDuplicate: false,
+      isResubmissionOfRejected: false,
+      resubmissionDetails: null,
+      matchedProjects: []
+    };
 
-      dataStore.projects.unshift(newProj);
+    try {
+      originalityReport = await similarityService.analyzeOriginality({
+        title,
+        category: finalCategory,
+        tech: techArray,
+        abstract,
+        problem_statement: problemStatement || '',
+        objectives: objectives || '',
+        methodology: methodology || ''
+      });
+    } catch (simErr) {
+      console.warn('Similarity analysis warning:', simErr.message);
+    }
+
+    // BUSINESS RULE: PREVENT DUPLICATE OR CRITICALLY LOW ORIGINALITY SUBMISSIONS (< 20%)
+    if (originalityReport.isDirectDuplicate || originalityReport.originalityScore < 20.0) {
+      return res.status(409).json({
+        success: false,
+        isDuplicate: true,
+        similarityScore: originalityReport.similarityScore,
+        originalityScore: originalityReport.originalityScore,
+        message: `Duplicate submission blocked: Originality score is critically low (${originalityReport.originalityScore}% original, ${originalityReport.similarityScore}% similarity). Submissions with originality below 20% cannot be submitted according to academic integrity policy. Please use the AI Idea Enhancement recommendations to differentiate your project.`,
+        matchedProjects: originalityReport.matchedProjects,
+        enhancementSuggestions: originalityReport.enhancementSuggestions
+      });
+    }
+
+    // AUTOMATED TESTING-PHASE FACULTY ASSIGNMENT STRICTLY TO 3 TEST FACULTY
+    const assignedFaculty = dataStore.assignRandomFacultyForDomain(finalCategory);
+
+    // If custom domain, record admin domain request while keeping faculty review mapped
+    if (isCustomDomain) {
       dataStore.domainRequests.unshift({
         id: dataStore.getNextDomainRequestId(),
         projectId: newId,
@@ -210,108 +222,78 @@ exports.submitProject = (req, res) => {
         route: '/admin?tab=domains',
         read: false
       });
-
-      return res.status(201).json({
-        success: true,
-        message: 'Project submitted — pending custom domain verification by Administrator',
-        project: newProj
-      });
     }
 
-    // AUTOMATED RANDOM FACULTY ASSIGNMENT WITH WORKLOAD THRESHOLD
-    const assignedFaculty = dataStore.assignRandomFacultyForDomain(finalCategory);
+    const newProj = {
+      id: newId,
+      type,
+      status: 'In Review',
+      title,
+      author: user ? user.name : 'Student',
+      dept: user ? user.dept : 'Computer Science',
+      category: finalCategory,
+      likes: 0,
+      commentsCount: 0,
+      views: 0,
+      clones: 0,
+      liked: false,
+      abstract,
+      problemStatement: problemStatement || '',
+      objectives: objectives || '',
+      methodology: methodology || '',
+      github: normGithub,
+      doc: normDoc,
+      ppt: normPpt,
+      cert: normCert,
+      demo: normDemo,
+      vercel: normVercel,
+      tech: techArray,
+      collaborators: [],
+      assignedFaculty,
+      comments: [],
+      enhancements: [],
+      files: uploadedFiles,
+      originalityScore: originalityReport.originalityScore,
+      similarityScore: originalityReport.similarityScore,
+      isResubmissionOfRejected: originalityReport.isResubmissionOfRejected,
+      resubmissionDetails: originalityReport.resubmissionDetails
+    };
 
-    if (type === 'Internal') {
-      const newProj = {
-        id: newId,
-        type: 'Internal',
-        status: 'In Review',
-        title,
-        author: user ? user.name : 'Student',
-        dept: user ? user.dept : 'Computer Science',
-        category: finalCategory,
-        likes: 0,
-        commentsCount: 0,
-        views: 0,
-        clones: 0,
-        liked: false,
-        abstract,
-        github: normGithub,
-        doc: normDoc,
-        ppt: normPpt,
-        demo: normDemo,
-        vercel: normVercel,
-        tech: techArray,
-        collaborators: [],
-        assignedFaculty,
-        comments: [],
-        enhancements: [],
-        files: uploadedFiles
-      };
+    dataStore.projects.unshift(newProj);
 
-      dataStore.projects.unshift(newProj);
-      dataStore.reviewQueue.unshift({
-        id: newId,
-        projectId: newId,
-        title,
-        author: user ? user.name : 'Student',
-        category: finalCategory,
-        submitted: 'Just now',
-        type: 'Internal',
-        faculty: assignedFaculty,
-        isEnhancement: false,
-        abstract,
-        github: normGithub,
-        doc: normDoc,
-        ppt: normPpt,
-        tech: techArray,
-        files: uploadedFiles
-      });
+    // Populate Review Queue for Faculty Evaluation
+    dataStore.reviewQueue.unshift({
+      id: newId,
+      projectId: newId,
+      title,
+      author: user ? user.name : 'Student',
+      dept: user ? user.dept : 'Computer Science',
+      category: finalCategory,
+      submitted: 'Just now',
+      type,
+      faculty: assignedFaculty,
+      isEnhancement: false,
+      abstract,
+      problem_statement: problemStatement || '',
+      objectives: objectives || '',
+      methodology: methodology || '',
+      github: normGithub,
+      doc: normDoc,
+      ppt: normPpt,
+      cert: normCert,
+      demo: normDemo,
+      vercel: normVercel,
+      tech: techArray,
+      files: uploadedFiles,
+      originalityScore: originalityReport.originalityScore,
+      similarityScore: originalityReport.similarityScore,
+      isResubmissionOfRejected: originalityReport.isResubmissionOfRejected,
+      resubmissionDetails: originalityReport.resubmissionDetails,
+      matchedProjects: originalityReport.matchedProjects
+    });
 
-      dataStore.notifications.unshift({
-        id: dataStore.notifications.length + 1,
-        email: assignedFaculty,
-        icon: 'bell',
-        text: `New Internal Project assigned for review: "${title}" by ${user ? user.name : 'Student'}`,
-        time: 'Just now',
-        route: '/reviews',
-        read: false
-      });
-
-      return res.status(201).json({
-        success: true,
-        message: `Submitted — automatically assigned for faculty review`,
-        project: newProj
-      });
-    } else {
-      const newProj = {
-        id: newId,
-        type: 'External',
-        status: 'Pending Guide',
-        title,
-        author: user ? user.name : 'Student',
-        dept: user ? user.dept : 'Computer Science',
-        category: finalCategory,
-        likes: 0,
-        commentsCount: 0,
-        views: 0,
-        clones: 0,
-        liked: false,
-        abstract,
-        github: normGithub,
-        doc: normDoc,
-        cert: normCert,
-        demo: normDemo,
-        vercel: normVercel,
-        tech: techArray,
-        collaborators: [],
-        assignedFaculty,
-        comments: [],
-        enhancements: [],
-        files: uploadedFiles
-      };
-
-      dataStore.projects.unshift(newProj);
+    // For External projects, also register guide request
+    if (type === 'External') {
       dataStore.guideRequests.unshift({
         id: newId,
         projectId: newId,
@@ -321,27 +303,76 @@ exports.submitProject = (req, res) => {
         category: finalCategory,
         requested: 'Just now'
       });
-
-      dataStore.notifications.unshift({
-        id: dataStore.notifications.length + 1,
-        email: assignedFaculty,
-        icon: 'chat',
-        text: `Assigned as guide for external project "${title}" by ${user ? user.name : 'Student'}`,
-        time: 'Just now',
-        route: '/guides',
-        read: false
-      });
-
-      return res.status(201).json({
-        success: true,
-        message: `External project submitted — guide request assigned`,
-        project: newProj
-      });
     }
+
+    // Notify Assigned Faculty Reviewer
+    dataStore.notifications.unshift({
+      id: dataStore.notifications.length + 1,
+      email: assignedFaculty,
+      icon: 'bell',
+      text: `New ${type} Project assigned for review: "${title}" by ${user ? user.name : 'Student'}${originalityReport.isResubmissionOfRejected ? ' [Flagged Resubmission of Rejected Project]' : ''}`,
+      time: 'Just now',
+      route: '/reviews',
+      read: false
+    });
+
+    // Synchronize into PostgreSQL
+    if (db.isPgConnected()) {
+      try {
+        await db.pool.query(
+          `INSERT INTO submissions (id, project_id, student_id, student_name, student_dept, title, category, type, abstract, problem_statement, objectives, methodology, tech_stack, github_url, doc_url, ppt_url, cert_url, demo_url, vercel_url, status, originality_score, similarity_score, is_resubmission_of_rejected, flagged_rejected_submission_id, assigned_faculty)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
+           ON CONFLICT (id) DO UPDATE SET
+             title = EXCLUDED.title,
+             category = EXCLUDED.category,
+             abstract = EXCLUDED.abstract,
+             assigned_faculty = EXCLUDED.assigned_faculty,
+             status = EXCLUDED.status,
+             originality_score = EXCLUDED.originality_score,
+             similarity_score = EXCLUDED.similarity_score`,
+          [
+            newId, newId, user ? user.id : 1, user ? user.name : 'Student', user ? user.dept : 'Computer Science',
+            title, finalCategory, type, abstract, problemStatement || '', objectives || '', methodology || '',
+            techArray, normGithub, normDoc, normPpt, normCert, normDemo, normVercel,
+            'Pending Review', originalityReport.originalityScore, originalityReport.similarityScore,
+            originalityReport.isResubmissionOfRejected,
+            originalityReport.resubmissionDetails ? originalityReport.resubmissionDetails.priorSubmissionId : null,
+            assignedFaculty
+          ]
+        );
+
+        if (originalityReport.isResubmissionOfRejected && originalityReport.resubmissionDetails) {
+          const rd = originalityReport.resubmissionDetails;
+          await db.pool.query(
+            `INSERT INTO rejected_resubmission_flags (current_submission_id, prior_rejected_submission_id, similarity_score, matched_sections, original_rejecting_faculty, original_rejection_date, original_rejection_reason, original_faculty_comments)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             ON CONFLICT DO NOTHING`,
+            [
+              newId, rd.priorSubmissionId, rd.similarityScore, JSON.stringify(rd.matchedSections),
+              rd.originalRejectingFaculty, rd.originalRejectionDate, rd.originalRejectionReason, rd.originalFacultyComments
+            ]
+          ).catch(() => {});
+        }
+      } catch (dbErr) {
+        console.warn('DB submission insert warning:', dbErr.message);
+      }
+    }
+
+    const clientProject = (user && user.role === 'Student')
+      ? { ...newProj, assignedFaculty: 'Assigned: Faculty Reviewer (Blind Evaluation)' }
+      : newProj;
+
+    return res.status(201).json({
+      success: true,
+      message: `Project submitted — assigned to ${assignedFaculty} for evaluation`,
+      project: clientProject,
+      originalityReport
+    });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 exports.publishIdea = (req, res) => {
   try {

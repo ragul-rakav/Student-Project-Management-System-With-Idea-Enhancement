@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import Icon from '../components/common/Icons';
+import RandomFillButton from '../components/common/RandomFillButton';
+import { getRandomStudent } from '../utils/mockDataGenerator';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -15,6 +17,16 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const { showToast } = useApp();
   const navigate = useNavigate();
+
+  const handleAutoFillStudent = () => {
+    const mock = getRandomStudent();
+    setName(mock.name);
+    setEmail(mock.email);
+    setPassword(mock.password);
+    setDept(mock.dept);
+    setYear(mock.year);
+    showToast(`Filled student registration form for ${mock.name}`);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -34,10 +46,10 @@ export default function RegisterPage() {
     <div className="login-shell">
       <div className="login-side">
         <div className="top">
-          <div className="brand-mark" style={{ background: '#1f3d8f' }}>
+          <div className="brand-mark">
             <Icon name="book" size={18} />
           </div>
-          <span style={{ fontWeight: 700, fontSize: '17px' }}>ProjectHub</span>
+          <span style={{ fontWeight: 700, fontSize: '18px' }}>ProjectPulse</span>
         </div>
         <div>
           <h2>Create your student account. Get started.</h2>
@@ -48,8 +60,11 @@ export default function RegisterPage() {
 
       <div className="login-form-wrap">
         <div className="login-card">
-          <h1>Register Student</h1>
-          <p className="sub">Enter your details to create an account.</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+            <h1 style={{ margin: 0 }}>Register Student</h1>
+            <RandomFillButton onFill={handleAutoFillStudent} label="Test Auto-Fill" />
+          </div>
+          <p className="sub">Enter your details or auto-fill to create an account for testing.</p>
 
           <form onSubmit={handleRegister}>
             <div className="field">
@@ -87,7 +102,6 @@ export default function RegisterPage() {
               <select
                 value={dept}
                 onChange={(e) => setDept(e.target.value)}
-                style={{ background: 'rgba(3,7,18,0.4)', color: '#fff' }}
               >
                 <option>Computer Science</option>
                 <option>Information Technology</option>
@@ -101,7 +115,6 @@ export default function RegisterPage() {
               <select
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                style={{ background: 'rgba(3,7,18,0.4)', color: '#fff' }}
               >
                 <option>First Year</option>
                 <option>Second Year</option>
