@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 820" width="100%" height="100%" style="background:#0b1120; font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9" />
+    </linearGradient>
+    <!-- Filter for soft glows -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Title Banner -->
+  <rect x="40" y="25" width="1020" height="70" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="550" y="55" fill="#f8fafc" font-size="22" font-weight="700" text-anchor="middle">STUDENT REPOSITORY MANAGEMENT SYSTEM WITH IDEA ENHANCEMENT</text>
+  <text x="550" y="78" fill="#94a3b8" font-size="14" font-weight="500" text-anchor="middle">High-Level Multi-Tier System Architecture &amp; Data Pipeline</text>
+
+  <!-- ================= TIER 1: CLIENT TIER ================= -->
+  <g transform="translate(40, 115)">
+    <!-- Container Box -->
+    <rect x="0" y="0" width="1020" height="155" rx="14" fill="url(#cardBg)" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#shadow)" />
+    <!-- Tier Badge -->
+    <rect x="20" y="-14" width="220" height="28" rx="6" fill="url(#primaryGrad)" />
+    <text x="130" y="5" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle" letter-spacing="1">TIER 1: PRESENTATION LAYER</text>
+
+    <!-- Client Component Cards -->
+    <g transform="translate(25, 25)">
+      <!-- Box 1: Student App -->
+      <rect x="0" y="0" width="220" height="105" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="12" y="12" width="36" height="36" rx="8" fill="url(#primaryGrad)" />
+      <text x="30" y="35" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle">🎓</text>
+      <text x="58" y="28" fill="#f1f5f9" font-size="14" font-weight="600">Student Portal</text>
+      <text x="58" y="44" fill="#38bdf8" font-size="11">React 18 + Vite SPA</text>
+      <text x="12" y="68" fill="#94a3b8" font-size="11">• Project Submission &amp; Drafts</text>
+      <text x="12" y="84" fill="#94a3b8" font-size="11">• Real-Time Similarity Checker</text>
+      <text x="12" y="100" fill="#94a3b8" font-size="11">• Credit Ledger &amp; Idea Showcase</text>
+
+      <!-- Box 2: Faculty Workspace -->
+      <rect x="245" y="0" width="225" height="105" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="257" y="12" width="36" height="36" rx="8" fill="url(#emeraldGrad)" />
+      <text x="275" y="35" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle">👩‍🏫</text>
+      <text x="303" y="28" fill="#f1f5f9" font-size="14" font-weight="600">Faculty Workspace</text>
+      <text x="303" y="44" fill="#34d399" font-size="11">Confidential Review Desk</text>
+      <text x="257" y="68" fill="#94a3b8" font-size="11">• Domain-Assigned Work Queue</text>
+      <text x="257" y="84" fill="#94a3b8" font-size="11">• Blind Review &amp; Grading Rubric</text>
+      <text x="257" y="100" fill="#94a3b8" font-size="11">• Resubmission Audit Comparison</text>
+
+      <!-- Box 3: Admin Center -->
+      <rect x="495" y="0" width="225" height="105" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="507" y="12" width="36" height="36" rx="8" fill="url(#purpleGrad)" />
+      <text x="525" y="35" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle">🛡️</text>
+      <text x="553" y="28" fill="#f1f5f9" font-size="14" font-weight="600">Institutional Governance</text>
+      <text x="553" y="44" fill="#c084fc" font-size="11">Admin Center &amp; Analytics</text>
+      <text x="507" y="68" fill="#94a3b8" font-size="11">• Custom Domain Approvals</text>
+      <text x="507" y="84" fill="#94a3b8" font-size="11">• Workload Quota Monitoring</text>
+      <text x="507" y="100" fill="#94a3b8" font-size="11">• Violation Escalation Handling</text>
+
+      <!-- Box 4: Design & Context System -->
+      <rect x="745" y="0" width="225" height="105" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="757" y="12" width="36" height="36" rx="8" fill="url(#amberGrad)" />
+      <text x="775" y="35" fill="#ffffff" font-size="16" font-weight="700" text-anchor="middle">🎨</text>
+      <text x="803" y="28" fill="#f1f5f9" font-size="14" font-weight="600">UI / State Engine</text>
+      <text x="803" y="44" fill="#fbbf24" font-size="11">Glassmorphism Token System</text>
+      <text x="757" y="68" fill="#94a3b8" font-size="11">• React Context (Auth &amp; Credit)</text>
+      <text x="757" y="84" fill="#94a3b8" font-size="11">• Vanilla CSS Design Tokens</text>
+      <text x="757" y="100" fill="#94a3b8" font-size="11">• Axios REST Client &amp; Toasts</text>
+    </g>
+  </g>
+
+  <!-- Connectors Tier 1 -> Tier 2 -->
+  <g stroke="#38bdf8" stroke-width="2" fill="none" opacity="0.8">
+    <path d="M 260 270 L 260 310" marker-end="url(#arrow)" />
+    <path d="M 550 270 L 550 310" />
+    <path d="M 840 270 L 840 310" />
+  </g>
+  <text x="550" y="295" fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle">RESTful JSON APIs (HTTPS / JWT Bearer Authorization)</text>
+
+  <!-- ================= TIER 2: APPLICATION & LOGIC TIER ================= -->
+  <g transform="translate(40, 315)">
+    <!-- Container Box -->
+    <rect x="0" y="0" width="1020" height="260" rx="14" fill="url(#cardBg)" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#shadow)" />
+    <!-- Tier Badge -->
+    <rect x="20" y="-14" width="240" height="28" rx="6" fill="url(#purpleGrad)" />
+    <text x="140" y="5" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle" letter-spacing="1">TIER 2: APPLICATION / BACKEND</text>
+
+    <!-- Sub-row 1: Gateways & Middleware -->
+    <g transform="translate(25, 20)">
+      <rect x="0" y="0" width="970" height="42" rx="8" fill="#0f172a" stroke="#475569" stroke-width="1" />
+      <text x="20" y="26" fill="#38bdf8" font-size="12" font-weight="700">API GATEWAY &amp; MIDDLEWARE:</text>
+      <text x="200" y="26" fill="#cbd5e1" font-size="12">Express.js Router</text>
+      <circle cx="310" cy="22" r="3" fill="#64748b" />
+      <text x="325" y="26" fill="#cbd5e1" font-size="12">JWT Token Authenticator</text>
+      <circle cx="485" cy="22" r="3" fill="#64748b" />
+      <text x="500" y="26" fill="#cbd5e1" font-size="12">Role-Based Access Control (RBAC)</text>
+      <circle cx="720" cy="22" r="3" fill="#64748b" />
+      <text x="735" y="26" fill="#cbd5e1" font-size="12">Multer File Uploader</text>
+      <circle cx="875" cy="22" r="3" fill="#64748b" />
+      <text x="890" y="26" fill="#cbd5e1" font-size="12">Rate Limiter</text>
+    </g>
+
+    <!-- Sub-row 2: Core Micro-engines & Controllers -->
+    <g transform="translate(25, 75)">
+      <!-- Service 1: Workload Balancer -->
+      <rect x="0" y="0" width="230" height="165" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="12" y="12" width="28" height="28" rx="6" fill="url(#primaryGrad)" />
+      <text x="26" y="31" fill="#ffffff" font-size="14" text-anchor="middle">⚙️</text>
+      <text x="48" y="26" fill="#f1f5f9" font-size="13" font-weight="600">Faculty Workload Balancer</text>
+      <text x="48" y="40" fill="#38bdf8" font-size="10">Automated Review Assignment</text>
+      <line x1="12" y1="52" x2="218" y2="52" stroke="#1e293b" stroke-width="1" />
+      <text x="12" y="70" fill="#94a3b8" font-size="11">• Domain-match verification</text>
+      <text x="12" y="88" fill="#94a3b8" font-size="11">• Max pending quota check (≤ 5)</text>
+      <text x="12" y="106" fill="#94a3b8" font-size="11">• Min pending load selection</text>
+      <text x="12" y="124" fill="#94a3b8" font-size="11">• Reviewer anonymity encryption</text>
+      <text x="12" y="142" fill="#94a3b8" font-size="11">• Auto-escalate overload cases</text>
+
+      <!-- Service 2: Hybrid Similarity & NLP -->
+      <rect x="245" y="0" width="240" height="165" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2" />
+      <rect x="257" y="12" width="28" height="28" rx="6" fill="url(#primaryGrad)" />
+      <text x="271" y="31" fill="#ffffff" font-size="14" text-anchor="middle">🧠</text>
+      <text x="293" y="26" fill="#f1f5f9" font-size="13" font-weight="600">Multimodal Similarity NLP</text>
+      <text x="293" y="40" fill="#38bdf8" font-size="10">Plagiarism &amp; Originality Engine</text>
+      <line x1="257" y1="52" x2="473" y2="52" stroke="#1e293b" stroke-width="1" />
+      <text x="257" y="70" fill="#94a3b8" font-size="11">• 128-dim TF-IDF Subword Hash</text>
+      <text x="257" y="88" fill="#94a3b8" font-size="11">• L2 Vector Normalization &amp; Cosine</text>
+      <text x="257" y="106" fill="#94a3b8" font-size="11">• Lexical N-Gram Jaccard (25%)</text>
+      <text x="257" y="124" fill="#94a3b8" font-size="11">• Tech Stack Jaccard Match (15%)</text>
+      <text x="257" y="142" fill="#38bdf8" font-weight="600" font-size="11">Formula: 0.60S + 0.25L + 0.15T</text>
+
+      <!-- Service 3: Patent & Enhancement Engine -->
+      <rect x="500" y="0" width="230" height="165" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="512" y="12" width="28" height="28" rx="6" fill="url(#amberGrad)" />
+      <text x="526" y="31" fill="#ffffff" font-size="14" text-anchor="middle">💡</text>
+      <text x="548" y="26" fill="#f1f5f9" font-size="13" font-weight="600">Idea Enhancement &amp; IP</text>
+      <text x="548" y="40" fill="#fbbf24" font-size="10">Patent Screening &amp; Guidance</text>
+      <line x1="512" y1="52" x2="718" y2="52" stroke="#1e293b" stroke-width="1" />
+      <text x="512" y="70" fill="#94a3b8" font-size="11">• 35 U.S.C. § 101/103 Screening</text>
+      <text x="512" y="88" fill="#94a3b8" font-size="11">• Google Patents &amp; OpenAlex API</text>
+      <text x="512" y="106" fill="#94a3b8" font-size="11">• Tangible Tech vs Routine CRUD</text>
+      <text x="512" y="124" fill="#94a3b8" font-size="11">• Architectural Enhancements</text>
+      <text x="512" y="142" fill="#94a3b8" font-size="11">• Edge AI, ZKPs, Kalman Filters</text>
+
+      <!-- Service 4: Audit & Gamification -->
+      <rect x="745" y="0" width="225" height="165" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="757" y="12" width="28" height="28" rx="6" fill="url(#emeraldGrad)" />
+      <text x="771" y="31" fill="#ffffff" font-size="14" text-anchor="middle">🏆</text>
+      <text x="793" y="26" fill="#f1f5f9" font-size="13" font-weight="600">Credit Economy &amp; Audit</text>
+      <text x="793" y="40" fill="#34d399" font-size="10">Tier Gate &amp; Resubmission</text>
+      <line x1="757" y1="52" x2="958" y2="52" stroke="#1e293b" stroke-width="1" />
+      <text x="757" y="70" fill="#94a3b8" font-size="11">• Rejected Resubmission Links</text>
+      <text x="757" y="88" fill="#94a3b8" font-size="11">• Delta Tech Stack Tracker</text>
+      <text x="757" y="106" fill="#94a3b8" font-size="11">• Credit Ledger (+25 / +20 / +10)</text>
+      <text x="757" y="124" fill="#94a3b8" font-size="11">• Tier Access Gate (60/100/200)</text>
+      <text x="757" y="142" fill="#94a3b8" font-size="11">• Institutional Leaderboards</text>
+    </g>
+  </g>
+
+  <!-- Connectors Tier 2 -> Tier 3 -->
+  <g stroke="#34d399" stroke-width="2" fill="none" opacity="0.8">
+    <path d="M 260 575 L 260 615" />
+    <path d="M 550 575 L 550 615" />
+    <path d="M 840 575 L 840 615" />
+  </g>
+  <text x="550" y="598" fill="#34d399" font-size="11" font-weight="600" text-anchor="middle">SQL Queries &amp; Parameterized Transactions (pg Pool / In-Memory Sync)</text>
+
+  <!-- ================= TIER 3: PERSISTENCE & VECTOR TIER ================= -->
+  <g transform="translate(40, 620)">
+    <!-- Container Box -->
+    <rect x="0" y="0" width="1020" height="175" rx="14" fill="url(#cardBg)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#shadow)" />
+    <!-- Tier Badge -->
+    <rect x="20" y="-14" width="240" height="28" rx="6" fill="url(#emeraldGrad)" />
+    <text x="140" y="5" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle" letter-spacing="1">TIER 3: PERSISTENCE &amp; VECTORS</text>
+
+    <!-- Storage Component Cards -->
+    <g transform="translate(25, 25)">
+      <!-- Box 1: Core Relational DB -->
+      <rect x="0" y="0" width="310" height="125" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="12" y="12" width="32" height="32" rx="8" fill="url(#primaryGrad)" />
+      <text x="28" y="33" fill="#ffffff" font-size="16" text-anchor="middle">🗄️</text>
+      <text x="52" y="27" fill="#f1f5f9" font-size="13" font-weight="600">PostgreSQL Relational DB</text>
+      <text x="52" y="42" fill="#38bdf8" font-size="11">ACID Relational Core</text>
+      <text x="12" y="66" fill="#94a3b8" font-size="11">• Users, Roles &amp; Password Hashes</text>
+      <text x="12" y="82" fill="#94a3b8" font-size="11">• Projects, Categories &amp; Departments</text>
+      <text x="12" y="98" fill="#94a3b8" font-size="11">• Review Queues &amp; Guide Mentorships</text>
+      <text x="12" y="114" fill="#94a3b8" font-size="11">• Likes, Views, Comments &amp; Tiers</text>
+
+      <!-- Box 2: Vector Store & Embeddings -->
+      <rect x="330" y="0" width="320" height="125" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2" />
+      <rect x="342" y="12" width="32" height="32" rx="8" fill="url(#purpleGrad)" />
+      <text x="358" y="33" fill="#ffffff" font-size="16" text-anchor="middle">⚡</text>
+      <text x="382" y="27" fill="#f1f5f9" font-size="13" font-weight="600">Hybrid Vector &amp; Audit Store</text>
+      <text x="382" y="42" fill="#c084fc" font-size="11">Fast Subword Vector Embeddings</text>
+      <text x="342" y="66" fill="#94a3b8" font-size="11">• 128-dim FLOAT8[] Vector Table</text>
+      <text x="342" y="82" fill="#94a3b8" font-size="11">• In-Memory Fast Lookup Vector Cache</text>
+      <text x="342" y="98" fill="#94a3b8" font-size="11">• Immutable Submissions &amp; Decisions</text>
+      <text x="342" y="114" fill="#94a3b8" font-size="11">• Rejected Resubmission Audit Flags</text>
+
+      <!-- Box 3: Multi-Provider Embeddings & Assets -->
+      <rect x="670" y="0" width="300" height="125" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.2" />
+      <rect x="682" y="12" width="32" height="32" rx="8" fill="url(#emeraldGrad)" />
+      <text x="698" y="33" fill="#ffffff" font-size="16" text-anchor="middle">📦</text>
+      <text x="722" y="27" fill="#f1f5f9" font-size="13" font-weight="600">File Storage &amp; AI Providers</text>
+      <text x="722" y="42" fill="#34d399" font-size="11">Multi-Modal Asset Engines</text>
+      <text x="682" y="66" fill="#94a3b8" font-size="11">• Multer File Engine (Reports, PPTs, ZIP)</text>
+      <text x="682" y="82" fill="#94a3b8" font-size="11">• Local TF-IDF Vectorizer (Offline)</text>
+      <text x="682" y="98" fill="#94a3b8" font-size="11">• Google Gemini (text-embedding-004)</text>
+      <text x="682" y="114" fill="#94a3b8" font-size="11">• OpenAI (text-embedding-3-small)</text>
+    </g>
+  </g>
+</svg>

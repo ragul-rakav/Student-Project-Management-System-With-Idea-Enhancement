@@ -9,10 +9,11 @@ function helperInitials(name) {
 }
 
 function setRefreshTokenCookie(res, refreshToken) {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('projectpulse_refresh', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 }
@@ -166,7 +167,12 @@ exports.logout = async (req, res) => {
     if (rawRefreshToken) {
       await authService.revokeRefreshToken(rawRefreshToken);
     }
-    res.clearCookie('projectpulse_refresh');
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.clearCookie('projectpulse_refresh', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax'
+    });
     return res.json({ success: true, message: 'Logged out cleanly' });
   } catch (err) {
     return res.status(500).json({ success: false, message: err.message });

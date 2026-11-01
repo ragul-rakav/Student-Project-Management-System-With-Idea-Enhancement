@@ -21,11 +21,46 @@ const { similarityService } = require('./services/similarityService');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS with Credentials for cookies
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+// Configurable allowed origins for Vercel, localhost, and custom domains
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()) 
+  : [];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser requests (mobile, curl, Postman, health checks)
+    if (!origin) return callback(null, true);
+
+    // Allow local development
+    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
+
+    // Allow configured CLIENT_URL
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL.replace(/\/+$/, '')) {
+      return callback(null, true);
+    }
+
+    // Allow Vercel deployments (*.vercel.app)
+    if (/^https:\/\/([a-zA-Z0-9_-]+)\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow explicit origins in ALLOWED_ORIGINS
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+
+    // Dynamic origin fallback (supports withCredentials)
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Body & Cookie Parsers
 app.use(express.json());
@@ -37,8 +72,12 @@ const fs = require('fs');
 // Static directory for uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve static frontend assets if public folder exists
-const publicPath = path.join(__dirname, 'public');
+// Serve static frontend assets if public folder exists or client/dist exists
+const clientDistPath = path.join(__dirname, '../client/dist');
+const publicPath = fs.existsSync(path.join(__dirname, 'public'))
+  ? path.join(__dirname, 'public')
+  : (fs.existsSync(clientDistPath) ? clientDistPath : path.join(__dirname, 'public'));
+
 if (fs.existsSync(publicPath)) {
   app.use(express.static(publicPath));
 }

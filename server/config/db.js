@@ -10,12 +10,31 @@ let connectionPromise = null;
 // Initialize PostgreSQL Pool
 const connectionString = process.env.DATABASE_URL || `postgres://${process.env.PGUSER || 'postgres'}:${process.env.PGPASSWORD || 'postgres'}@${process.env.PGHOST || 'localhost'}:${process.env.PGPORT || 5432}/${process.env.PGDATABASE || 'student_project_repository'}`;
 
-pool = new Pool({
+const isCloudPostgres = Boolean(
+  process.env.DATABASE_URL && (
+    process.env.DATABASE_URL.includes('neon.tech') ||
+    process.env.DATABASE_URL.includes('sslmode=') ||
+    process.env.DATABASE_URL.includes('railway') ||
+    process.env.DATABASE_URL.includes('supabase') ||
+    process.env.NODE_ENV === 'production'
+  )
+);
+
+const poolConfig = {
   connectionString: connectionString,
   max: 20, // Connection pool limit
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+  connectionTimeoutMillis: 5000,
+};
+
+// Enable SSL with self-signed certificate acceptance for Neon, Supabase & cloud DBs
+if (isCloudPostgres) {
+  poolConfig.ssl = {
+    rejectUnauthorized: false
+  };
+}
+
+pool = new Pool(poolConfig);
 
 pool.on('error', (err) => {
   console.warn('PostgreSQL pool background error:', err.message);

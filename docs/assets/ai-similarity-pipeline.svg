@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 780" width="100%" height="100%" style="background:#0b1120; font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#be123c" />
+    </linearGradient>
+    <linearGradient id="boxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Title Banner -->
+  <rect x="40" y="25" width="1020" height="65" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="550" y="54" fill="#f8fafc" font-size="20" font-weight="700" text-anchor="middle">AI-POWERED HYBRID SIMILARITY &amp; IDEA ENHANCEMENT PIPELINE</text>
+  <text x="550" y="75" fill="#94a3b8" font-size="13" font-weight="500" text-anchor="middle">Multimodal NLP • Cosine Vector Search • Rejected Resubmission Audit • Patentability Screening</text>
+
+  <!-- STEP 1: INPUT COMPOSITION -->
+  <g transform="translate(40, 110)">
+    <rect x="0" y="0" width="220" height="210" rx="12" fill="url(#boxGrad)" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadow)" />
+    <rect x="15" y="-12" width="140" height="24" rx="6" fill="url(#blueGrad)" />
+    <text x="85" y="4" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">STEP 1: INGESTION</text>
+    
+    <text x="15" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Student Proposal Input</text>
+    <rect x="15" y="42" width="190" height="26" rx="5" fill="#0f172a" stroke="#334155" />
+    <text x="25" y="59" fill="#94a3b8" font-size="11">📌 Title &amp; Category</text>
+    <rect x="15" y="74" width="190" height="26" rx="5" fill="#0f172a" stroke="#334155" />
+    <text x="25" y="91" fill="#94a3b8" font-size="11">📄 Technical Abstract</text>
+    <rect x="15" y="106" width="190" height="26" rx="5" fill="#0f172a" stroke="#334155" />
+    <text x="25" y="123" fill="#94a3b8" font-size="11">🎯 Problem &amp; Methodology</text>
+    <rect x="15" y="138" width="190" height="26" rx="5" fill="#0f172a" stroke="#334155" />
+    <text x="25" y="155" fill="#94a3b8" font-size="11">🛠️ Tech Stack [Array]</text>
+    
+    <text x="15" y="190" fill="#38bdf8" font-size="10" font-weight="600">Composite Text Synthesized</text>
+  </g>
+
+  <!-- Arrow Step 1 -> Step 2 -->
+  <path d="M 260 215 L 295 215" stroke="#38bdf8" stroke-width="2.5" fill="none" marker-end="url(#arrow)" />
+  <polygon points="295,210 305,215 295,220" fill="#38bdf8" />
+
+  <!-- STEP 2: VECTORIZATION & NLP -->
+  <g transform="translate(310, 110)">
+    <rect x="0" y="0" width="230" height="210" rx="12" fill="url(#boxGrad)" stroke="#c084fc" stroke-width="1.5" filter="url(#shadow)" />
+    <rect x="15" y="-12" width="160" height="24" rx="6" fill="url(#purpleGrad)" />
+    <text x="95" y="4" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">STEP 2: VECTORIZATION</text>
+
+    <text x="15" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Subword Feature Hashing</text>
+    <text x="15" y="52" fill="#94a3b8" font-size="11">• Regex cleaning &amp; tokenization</text>
+    <text x="15" y="70" fill="#94a3b8" font-size="11">• Unigrams &amp; Bigram n-grams</text>
+    <text x="15" y="88" fill="#94a3b8" font-size="11">• Deterministic murmur-style hash</text>
+    <text x="15" y="106" fill="#94a3b8" font-size="11">• 128-dimensional projection</text>
+    <text x="15" y="124" fill="#94a3b8" font-size="11">• L2 Euclidean Normalization:</text>
+    
+    <rect x="15" y="136" width="200" height="32" rx="6" fill="#0f172a" stroke="#475569" />
+    <text x="115" y="157" fill="#c084fc" font-size="12" font-weight="700" text-anchor="middle">‖v‖₂ = √(∑ vᵢ²) = 1.000</text>
+    <text x="15" y="190" fill="#c084fc" font-size="10" font-weight="600">SHA-256 Fingerprint Generated</text>
+  </g>
+
+  <!-- Arrow Step 2 -> Step 3 -->
+  <path d="M 540 215 L 575 215" stroke="#c084fc" stroke-width="2.5" fill="none" />
+  <polygon points="575,210 585,215 575,220" fill="#c084fc" />
+
+  <!-- STEP 3: HYBRID MULTIMODAL SCORING -->
+  <g transform="translate(590, 110)">
+    <rect x="0" y="0" width="470" height="210" rx="12" fill="url(#boxGrad)" stroke="#34d399" stroke-width="1.5" filter="url(#shadow)" />
+    <rect x="15" y="-12" width="190" height="24" rx="6" fill="url(#emeraldGrad)" />
+    <text x="110" y="4" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">STEP 3: HYBRID SIMILARITY</text>
+
+    <!-- Sub-scores Box -->
+    <g transform="translate(15, 25)">
+      <!-- Metric 1: Semantic -->
+      <rect x="0" y="0" width="135" height="100" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="67" y="24" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle">60% WEIGHT</text>
+      <text x="67" y="44" fill="#f1f5f9" font-size="11" font-weight="600" text-anchor="middle">Semantic Cosine</text>
+      <text x="67" y="65" fill="#94a3b8" font-size="10" text-anchor="middle">cos(θ) = (u·v) / (‖u‖‖v‖)</text>
+      <text x="67" y="85" fill="#38bdf8" font-size="10" text-anchor="middle">Vector Embeddings</text>
+
+      <!-- Metric 2: Lexical -->
+      <rect x="150" y="0" width="135" height="100" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="217" y="24" fill="#c084fc" font-size="12" font-weight="700" text-anchor="middle">25% WEIGHT</text>
+      <text x="217" y="44" fill="#f1f5f9" font-size="11" font-weight="600" text-anchor="middle">Lexical Overlap</text>
+      <text x="217" y="65" fill="#94a3b8" font-size="10" text-anchor="middle">J(A,B) = |A∩B| / |A∪B|</text>
+      <text x="217" y="85" fill="#c084fc" font-size="10" text-anchor="middle">N-Gram Bi/Trigrams</text>
+
+      <!-- Metric 3: Tech Stack -->
+      <rect x="300" y="0" width="140" height="100" rx="8" fill="#0f172a" stroke="#334155" />
+      <text x="370" y="24" fill="#34d399" font-size="12" font-weight="700" text-anchor="middle">15% WEIGHT</text>
+      <text x="370" y="44" fill="#f1f5f9" font-size="11" font-weight="600" text-anchor="middle">Tech Stack Match</text>
+      <text x="370" y="65" fill="#94a3b8" font-size="10" text-anchor="middle">Jaccard Token Index</text>
+      <text x="370" y="85" fill="#34d399" font-size="10" text-anchor="middle">Libraries &amp; Frameworks</text>
+    </g>
+
+    <!-- Formula Banner -->
+    <rect x="15" y="140" width="440" height="42" rx="8" fill="#0f172a" stroke="#34d399" stroke-width="1.2" />
+    <text x="235" y="165" fill="#34d399" font-size="13" font-weight="700" text-anchor="middle">Composite Similarity = (0.60 × S_sem) + (0.25 × S_lex) + (0.15 × S_tech)</text>
+    <text x="235" y="195" fill="#f8fafc" font-size="11" font-weight="600" text-anchor="middle">Originality Score = Max( 0.0,  100.0 − Composite Similarity )</text>
+  </g>
+
+  <!-- Connectors from Step 3 down to Steps 4A, 4B, 4C -->
+  <path d="M 825 320 L 825 365" stroke="#34d399" stroke-width="2" fill="none" />
+  <path d="M 220 365 L 825 365" stroke="#34d399" stroke-width="2" fill="none" />
+  <path d="M 220 365 L 220 395" stroke="#34d399" stroke-width="2" fill="none" />
+  <path d="M 550 365 L 550 395" stroke="#34d399" stroke-width="2" fill="none" />
+  <path d="M 880 365 L 880 395" stroke="#34d399" stroke-width="2" fill="none" />
+
+  <!-- STEP 4A: RISK ASSESSMENT MATRIX -->
+  <g transform="translate(40, 400)">
+    <rect x="0" y="0" width="320" height="340" rx="12" fill="url(#boxGrad)" stroke="#f43f5e" stroke-width="1.5" filter="url(#shadow)" />
+    <rect x="15" y="-12" width="180" height="24" rx="6" fill="url(#roseGrad)" />
+    <text x="105" y="4" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">RISK &amp; DUPLICATE GATES</text>
+
+    <!-- Risk Level Cards -->
+    <g transform="translate(15, 25)">
+      <!-- Low Risk -->
+      <rect x="0" y="0" width="290" height="55" rx="8" fill="#0f172a" stroke="#059669" stroke-width="1.2" />
+      <text x="15" y="24" fill="#34d399" font-size="12" font-weight="700">🟢 LOW RISK (&lt; 30% Similarity)</text>
+      <text x="15" y="42" fill="#94a3b8" font-size="11">Novel concept. Immediate clearance to review queue.</text>
+
+      <!-- Moderate Risk -->
+      <rect x="0" y="65" width="290" height="55" rx="8" fill="#0f172a" stroke="#d97706" stroke-width="1.2" />
+      <text x="15" y="89" fill="#fbbf24" font-size="12" font-weight="700">🟡 MODERATE RISK (30% – 55%)</text>
+      <text x="15" y="107" fill="#94a3b8" font-size="11">Related literature found. Suggestions offered.</text>
+
+      <!-- High Risk -->
+      <rect x="0" y="130" width="290" height="55" rx="8" fill="#0f172a" stroke="#ea580c" stroke-width="1.2" />
+      <text x="15" y="154" fill="#f97316" font-size="12" font-weight="700">🟠 HIGH RISK (55% – 80%)</text>
+      <text x="15" y="172" fill="#94a3b8" font-size="11">Significant overlap. Mandatory enhancement suggested.</text>
+
+      <!-- Critical Duplicate -->
+      <rect x="0" y="195" width="290" height="65" rx="8" fill="#0f172a" stroke="#e11d48" stroke-width="1.5" />
+      <text x="15" y="219" fill="#f43f5e" font-size="12" font-weight="700">🔴 CRITICAL DUPLICATE (≥ 80%)</text>
+      <text x="15" y="237" fill="#f43f5e" font-size="11" font-weight="600">BLATANT PLAGIARISM DETECTED</text>
+      <text x="15" y="251" fill="#94a3b8" font-size="10">Direct copy of existing repository. Blocked from submission.</text>
+    </g>
+    <text x="160" y="325" fill="#f43f5e" font-size="11" font-weight="600" text-anchor="middle">Auto-Blocks Duplicate Submissions</text>
+  </g>
+
+  <!-- STEP 4B: RESUBMISSION AUDIT & DELTA DETECTOR -->
+  <g transform="translate(390, 400)">
+    <rect x="0" y="0" width="320" height="340" rx="12" fill="url(#boxGrad)" stroke="#fbbf24" stroke-width="1.5" filter="url(#shadow)" />
+    <rect x="15" y="-12" width="200" height="24" rx="6" fill="url(#amberGrad)" />
+    <text x="115" y="4" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">REJECTED RESUBMISSION AUDIT</text>
+
+    <text x="15" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Cross-Faculty Resubmission Check</text>
+    <text x="15" y="52" fill="#94a3b8" font-size="11">• Scans historical rejected decisions</text>
+    <text x="15" y="70" fill="#94a3b8" font-size="11">• Triggers flag if overlap ≥ 45%</text>
+
+    <!-- Audit Link Mockup -->
+    <rect x="15" y="85" width="290" height="185" rx="8" fill="#0f172a" stroke="#334155" />
+    <text x="25" y="108" fill="#fbbf24" font-size="11" font-weight="700">🚨 Prior Rejection Link Detected</text>
+    <text x="25" y="126" fill="#cbd5e1" font-size="10">• Rejecting Faculty: Dr. Arumugam Pillai</text>
+    <text x="25" y="142" fill="#cbd5e1" font-size="10">• Rejection Reason: "Duplicate of senior batch"</text>
+    <text x="25" y="158" fill="#cbd5e1" font-size="10">• Critique: "Lack of original hardware novelty"</text>
+    
+    <rect x="25" y="170" width="270" height="42" rx="6" fill="#1e293b" />
+    <text x="35" y="186" fill="#38bdf8" font-size="10" font-weight="600">DELTA TECH STACK ANALYSIS:</text>
+    <text x="35" y="202" fill="#34d399" font-size="10">+ Added: [LoRaWAN, Kalman Filter]</text>
+    
+    <text x="25" y="230" fill="#94a3b8" font-size="10" font-weight="600">Faculty 3-Point Verification Checklist:</text>
+    <text x="25" y="246" fill="#94a3b8" font-size="10">1. Defect resolved? 2. New methodology?</text>
+    <text x="25" y="260" fill="#94a3b8" font-size="10">3. Genuine student innovation demonstrated?</text>
+
+    <text x="160" y="325" fill="#fbbf24" font-size="11" font-weight="600" text-anchor="middle">Prevents Reviewer Shopping Across Batches</text>
+  </g>
+
+  <!-- STEP 4C: PATENTABILITY & IDEA ENHANCEMENT -->
+  <g transform="translate(740, 400)">
+    <rect x="0" y="0" width="320" height="340" rx="12" fill="url(#boxGrad)" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadow)" />
+    <rect x="15" y="-12" width="200" height="24" rx="6" fill="url(#blueGrad)" />
+    <text x="115" y="4" fill="#ffffff" font-size="11" font-weight="700" text-anchor="middle">PATENTABILITY &amp; ENHANCEMENT</text>
+
+    <text x="15" y="32" fill="#f1f5f9" font-size="13" font-weight="600">Statutory IP &amp; Idea Suggestions</text>
+
+    <!-- Patent Screening Card -->
+    <rect x="15" y="45" width="290" height="110" rx="8" fill="#0f172a" stroke="#334155" />
+    <text x="25" y="66" fill="#38bdf8" font-size="11" font-weight="700">35 U.S.C. § 101/103 IP Evaluation</text>
+    <text x="25" y="84" fill="#94a3b8" font-size="10">• Technical Character (Embedded/Crypto/Bio)</text>
+    <text x="25" y="100" fill="#94a3b8" font-size="10">• Routine software / CRUD portals excluded</text>
+    <text x="25" y="116" fill="#94a3b8" font-size="10">• Live USPTO / Google Patents Prior Art check</text>
+    <text x="25" y="132" fill="#94a3b8" font-size="10">• Automated Provisional Claim 1 Drafter</text>
+
+    <!-- Idea Enhancement Suggestions -->
+    <rect x="15" y="165" width="290" height="135" rx="8" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+    <text x="25" y="186" fill="#38bdf8" font-size="11" font-weight="700">Contextual Idea Enhancements:</text>
+    <text x="25" y="204" fill="#f1f5f9" font-size="10">⚙️ Edge INT8 Inference &amp; Local Privacy</text>
+    <text x="25" y="222" fill="#f1f5f9" font-size="10">📡 Multi-Modal Sensor Fusion (Kalman)</text>
+    <text x="25" y="240" fill="#f1f5f9" font-size="10">🔐 Zero-Knowledge Receipts (zk-SNARKs)</text>
+    <text x="25" y="258" fill="#f1f5f9" font-size="10">🌐 P2P Mesh Gossip Protocol (Libp2p)</text>
+    <text x="25" y="278" fill="#34d399" font-size="10">Transforms Routine Ideas into Novel Work</text>
+
+    <text x="160" y="325" fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle">Empowers Student Research &amp; IP Filing</text>
+  </g>
+</svg>

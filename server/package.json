@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "migrate": "node database/migrateAndSeed.js",
+    "deploy": "node database/migrateAndSeed.js && node server.js",
     "dev": "node --watch server.js",
     "test": "vitest run"
   },

@@ -1,0 +1,2 @@
+web: node database/migrateAndSeed.js && node server.js
+

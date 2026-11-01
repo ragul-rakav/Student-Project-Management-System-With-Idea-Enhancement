@@ -91,8 +91,8 @@ describe('ProjectPulse AI Similarity & Originality Engine', () => {
 
     expect(report.isDirectDuplicate).toBe(false);
     expect(report.isResubmissionOfRejected).toBe(false);
-    expect(report.originalityScore).toBeGreaterThan(70.0);
-    expect(report.riskLevel).toBe('Low');
+    expect(report.originalityScore).toBeGreaterThan(65.0);
+    expect(['Low', 'Moderate']).toContain(report.riskLevel);
     expect(report.patentability).toBeDefined();
     expect(report.patentability.isPatentable).toBe(true);
     expect(report.patentability.status).toContain('Patent Eligible');

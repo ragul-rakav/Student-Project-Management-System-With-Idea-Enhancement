@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%" style="background:#0b1120; font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <rect x="40" y="20" width="920" height="60" rx="10" fill="#1e293b" stroke="#334155" filter="url(#shadow)" />
+  <text x="500" y="47" fill="#f8fafc" font-size="18" font-weight="700" text-anchor="middle">WORKLOAD-BALANCED FACULTY ALLOCATION &amp; CONFIDENTIAL REVIEW WORKFLOW</text>
+  <text x="500" y="66" fill="#94a3b8" font-size="12" text-anchor="middle">Automated Heuristic Matching • Pending Queue Threshold (≤ 5) • Reviewer Identity Anonymization</text>
+
+  <!-- Flowchart Stages -->
+  <g transform="translate(40, 105)">
+    <!-- Stage 1 -->
+    <rect x="0" y="0" width="165" height="110" rx="10" fill="url(#cardGrad)" stroke="#38bdf8" stroke-width="1.5" />
+    <text x="82" y="25" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle">STAGE 1: SUBMISSION</text>
+    <text x="82" y="50" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="middle">Student Submits</text>
+    <text x="82" y="70" fill="#94a3b8" font-size="10" text-anchor="middle">• Title &amp; Abstract</text>
+    <text x="82" y="85" fill="#94a3b8" font-size="10" text-anchor="middle">• Domain Category</text>
+    <text x="82" y="100" fill="#94a3b8" font-size="10" text-anchor="middle">• Documentation Files</text>
+
+    <!-- Arrow 1 -> 2 -->
+    <path d="M 165 55 L 205 55" stroke="#38bdf8" stroke-width="2" />
+    <polygon points="205,50 215,55 205,60" fill="#38bdf8" />
+
+    <!-- Stage 2 -->
+    <rect x="215" y="0" width="180" height="110" rx="10" fill="url(#cardGrad)" stroke="#c084fc" stroke-width="1.5" />
+    <text x="305" y="25" fill="#c084fc" font-size="11" font-weight="700" text-anchor="middle">STAGE 2: DOMAIN MATCH</text>
+    <text x="305" y="50" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="middle">Filter Specialists</text>
+    <text x="305" y="70" fill="#94a3b8" font-size="10" text-anchor="middle">Query Faculty where:</text>
+    <text x="305" y="85" fill="#38bdf8" font-size="10" font-weight="600" text-anchor="middle">category ∈ specializations</text>
+    <text x="305" y="100" fill="#94a3b8" font-size="10" text-anchor="middle">(ML, IoT, Cloud, Web, etc.)</text>
+
+    <!-- Arrow 2 -> 3 -->
+    <path d="M 395 55 L 435 55" stroke="#c084fc" stroke-width="2" />
+    <polygon points="435,50 445,55 435,60" fill="#c084fc" />
+
+    <!-- Stage 3 (Decision diamond styled) -->
+    <rect x="445" y="0" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#fbbf24" stroke-width="1.5" />
+    <text x="545" y="25" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">STAGE 3: CAPACITY CHECK</text>
+    <text x="545" y="50" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="middle">Queue Threshold &lt; 5?</text>
+    <text x="545" y="70" fill="#34d399" font-size="10" font-weight="600" text-anchor="middle">YES: Eligible Faculty Pool</text>
+    <text x="545" y="85" fill="#94a3b8" font-size="10" text-anchor="middle">arg min ( pending_reviews )</text>
+    <text x="545" y="100" fill="#f43f5e" font-size="10" font-weight="600" text-anchor="middle">NO: Escalate to Admin</text>
+
+    <!-- Arrow 3 -> 4 -->
+    <path d="M 645 55 L 685 55" stroke="#fbbf24" stroke-width="2" />
+    <polygon points="685,50 695,55 685,60" fill="#fbbf24" />
+
+    <!-- Stage 4 -->
+    <rect x="695" y="0" width="225" height="110" rx="10" fill="url(#cardGrad)" stroke="#34d399" stroke-width="1.5" />
+    <text x="807" y="25" fill="#34d399" font-size="11" font-weight="700" text-anchor="middle">STAGE 4: ALLOCATION</text>
+    <text x="807" y="50" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="middle">Assign &amp; Redact Identity</text>
+    <text x="807" y="70" fill="#94a3b8" font-size="10" text-anchor="middle">• Insert to review_queue</text>
+    <text x="807" y="85" fill="#38bdf8" font-size="10" font-weight="600" text-anchor="middle">• Reviewer identity anonymized</text>
+    <text x="807" y="100" fill="#94a3b8" font-size="10" text-anchor="middle">• Push notification to faculty</text>
+  </g>
+
+  <!-- Confidential Review Workspace Section -->
+  <g transform="translate(40, 245)">
+    <rect x="0" y="0" width="920" height="315" rx="12" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.2" filter="url(#shadow)" />
+    
+    <!-- Header -->
+    <rect x="20" y="15" width="880" height="35" rx="6" fill="#0f172a" />
+    <text x="35" y="38" fill="#38bdf8" font-size="12" font-weight="700">CONFIDENTIAL FACULTY EVALUATION &amp; DECISION LIFECYCLE</text>
+    <text x="880" y="38" fill="#94a3b8" font-size="11" text-anchor="end">Status: "In Review" (Identity Redacted from Student)</text>
+
+    <!-- Faculty Workspace Panel Left -->
+    <g transform="translate(20, 65)">
+      <rect x="0" y="0" width="425" height="230" rx="8" fill="#0f172a" stroke="#475569" />
+      <text x="15" y="26" fill="#f1f5f9" font-size="12" font-weight="600">Faculty Review Actions &amp; Rubric</text>
+      <line x1="15" y1="36" x2="410" y2="36" stroke="#1e293b" />
+      <text x="15" y="56" fill="#94a3b8" font-size="11">• In-depth Inspection: Problem, Abstract, Code &amp; PPT</text>
+      <text x="15" y="76" fill="#94a3b8" font-size="11">• Plagiarism Report Review: 128-dim Vector Score</text>
+      <text x="15" y="96" fill="#94a3b8" font-size="11">• Cross-Faculty Audit Check (If previously rejected)</text>
+      <text x="15" y="116" fill="#94a3b8" font-size="11">• Mandatory Written Remarks &amp; Feedback</text>
+      
+      <rect x="15" y="135" width="395" height="75" rx="6" fill="#1e293b" />
+      <text x="25" y="155" fill="#38bdf8" font-size="11" font-weight="600">Confidentiality Guarantee:</text>
+      <text x="25" y="173" fill="#cbd5e1" font-size="10">Student UI displays status as "In Review with Domain Specialist".</text>
+      <text x="25" y="190" fill="#cbd5e1" font-size="10">Faculty names are encrypted and omitted to prevent external grading pressure.</text>
+    </g>
+
+    <!-- Three Verdict Branches Right -->
+    <g transform="translate(465, 65)">
+      <!-- Branch 1: Approved -->
+      <rect x="0" y="0" width="435" height="65" rx="8" fill="#0f172a" stroke="#059669" stroke-width="1.5" />
+      <text x="15" y="24" fill="#34d399" font-size="12" font-weight="700">VERDICT 1: APPROVED</text>
+      <text x="15" y="42" fill="#94a3b8" font-size="11">• Student awarded +25 Credits (+20 for External)</text>
+      <text x="15" y="56" fill="#94a3b8" font-size="11">• Project published to Unlocked Repositories &amp; Leaderboards</text>
+
+      <!-- Branch 2: Changes Requested -->
+      <rect x="0" y="80" width="435" height="65" rx="8" fill="#0f172a" stroke="#d97706" stroke-width="1.5" />
+      <text x="15" y="104" fill="#fbbf24" font-size="12" font-weight="700">VERDICT 2: CHANGES REQUESTED</text>
+      <text x="15" y="122" fill="#94a3b8" font-size="11">• Proposal returned to student with itemized faculty remarks</text>
+      <text x="15" y="136" fill="#94a3b8" font-size="11">• Student revises methodology &amp; resubmits for delta re-check</text>
+
+      <!-- Branch 3: Rejected -->
+      <rect x="0" y="160" width="435" height="65" rx="8" fill="#0f172a" stroke="#e11d48" stroke-width="1.5" />
+      <text x="15" y="184" fill="#f43f5e" font-size="12" font-weight="700">VERDICT 3: REJECTED</text>
+      <text x="15" y="202" fill="#94a3b8" font-size="11">• Immutable record created in review_decisions with reasons</text>
+      <text x="15" y="216" fill="#f43f5e" font-size="10" font-weight="600">• Indexed in Rejected Resubmission Audit Detector for future cycles</text>
+    </g>
+  </g>
+</svg>

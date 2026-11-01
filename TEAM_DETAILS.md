@@ -1,9 +1,8 @@
-# Team Details 
+# Project Team Details
 
 ## Project Information
-- **Hackathon**: TechNova Software Hackathon
-- **Team Name**: Codexx
-- **Problem Title**: Student Project Repository and Showcase Platform
+- **Project Title**: Student Repository Management System with Idea Enhancement
+- **Project Category**: Academic Mini Project (B.E. Computer Science and Engineering)
 - **Live Platform URL**: [https://student-project-repository-platform.vercel.app](https://student-project-repository-platform.vercel.app)
 - **GitHub Repository**: [https://github.com/ragul-rakav/Student-Project-Repository-Platform](https://github.com/ragul-rakav/Student-Project-Repository-Platform)
 
@@ -11,12 +10,11 @@
 
 ## Team Members
 
-| Role | Member Name | Register Number | Email / Contact |
-| :--- | :--- | :--- | :--- |
-| **Team Lead** | **Aarthi S** | `7376241CS102` | `aarthis.cs24@bitsathy.ac.in` |
-| **Member 1** | **Swathi S** | `7376241CS427` | `swathis.cs24@bitsathy.ac.in` |
-| **Member 2** | **Abishek R** | `7376241CS111` | `abishekr.cs24@bitsathy.ac.in` |
-| **Member 3** | **K S Ragul Rakav** | `7376241CS221` | `ksragulrakav.cs24@bitsathy.ac.in` |
+| S.No | Member Name | Register Number | Degree & Branch | Email Address |
+| :---: | :--- | :--- | :--- | :--- |
+| 1 | **Swathi S** | `7376241CS427` | B.E. Computer Science & Engineering | `swathis.cs24@bitsathy.ac.in` |
+| 2 | **Abishek R** | `7376241CS111` | B.E. Computer Science & Engineering | `abishekr.cs24@bitsathy.ac.in` |
+| 3 | **K S Ragul Rakav** | `7376241CS221` | B.E. Computer Science & Engineering | `ksragulrakav.cs24@bitsathy.ac.in` |
 
 ---
 
@@ -24,6 +22,6 @@
 - [x] Complete Source Code (`client/` and `server/`)
 - [x] Database Schema with Seed Data (`server/database/schema.sql`, `server/database/seed.sql`)
 - [x] Software Requirements Specification (`SRS.md`)
-- [x] Comprehensive Project Report (`PROJECT_REPORT.md`)
+- [x] Comprehensive Academic Mini Project Report (`PROJECT_REPORT.md`)
 - [x] Team Details Specification (`TEAM_DETAILS.md`)
-- [x] Live Deployment Link in Repository Readme (`README.md`)
+- [x] Live Deployment Link & Documentation (`README.md`)
