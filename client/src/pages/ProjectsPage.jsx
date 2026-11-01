@@ -31,6 +31,7 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sort, setSort] = useState('popular');
   const [loading, setLoading] = useState(true);
 
@@ -91,14 +92,20 @@ export default function ProjectsPage() {
     'Other'
   ];
 
+  // Debounce search input by 250ms to eliminate redundant network calls
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 250);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   useEffect(() => {
     fetchProjects();
-  }, [filter, domainFilter, accessFilter, search, sort]);
+  }, [filter, domainFilter, accessFilter, debouncedSearch, sort]);
 
   const fetchProjects = async () => {
     try {
       if (projects.length === 0) setLoading(true);
-      const res = await api.get('/projects', { params: { filter, domain: domainFilter, accessLevel: accessFilter, search, sort } });
+      const res = await api.get('/projects', { params: { filter, domain: domainFilter, accessLevel: accessFilter, search: debouncedSearch, sort } });
       if (res.data.success) {
         setProjects(res.data.projects);
       }

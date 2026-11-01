@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 require('dotenv').config();
 
 const { notFoundHandler, errorHandler } = require('./middleware/errorMiddleware');
@@ -20,6 +21,9 @@ const { similarityService } = require('./services/similarityService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Enable gzip/brotli response compression for faster API and asset transfer
+app.use(compression());
 
 // Configurable allowed origins for Vercel, localhost, and custom domains
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
@@ -78,8 +82,20 @@ const publicPath = fs.existsSync(path.join(__dirname, 'public'))
   ? path.join(__dirname, 'public')
   : (fs.existsSync(clientDistPath) ? clientDistPath : path.join(__dirname, 'public'));
 
+// 1-year immutable caching for hashed production Vite assets (bundle loads instantly from cache)
+const assetsPath = path.join(publicPath, 'assets');
+if (fs.existsSync(assetsPath)) {
+  app.use('/assets', express.static(assetsPath, {
+    maxAge: '1y',
+    immutable: true
+  }));
+}
+
 if (fs.existsSync(publicPath)) {
-  app.use(express.static(publicPath));
+  app.use(express.static(publicPath, {
+    maxAge: '1h',
+    etag: true
+  }));
 }
 
 // Health Check API
