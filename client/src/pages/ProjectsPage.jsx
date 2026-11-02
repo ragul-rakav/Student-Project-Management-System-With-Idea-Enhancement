@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import api from '../services/api';
@@ -27,6 +27,7 @@ export default function ProjectsPage() {
   const { currentUser } = useAuth();
   const { showToast } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -97,6 +98,18 @@ export default function ProjectsPage() {
     const timer = setTimeout(() => setDebouncedSearch(search), 250);
     return () => clearTimeout(timer);
   }, [search]);
+
+  useEffect(() => {
+    if (location.state?.draft) {
+      const d = location.state.draft;
+      setTitle(d.title ? `Build: ${d.title}` : '');
+      if (d.category) setCategory(d.category);
+      if (d.tech) setTech(d.tech);
+      if (d.abstract) setAbstract(d.abstract);
+      setModal('submit');
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     fetchProjects();
@@ -189,6 +202,17 @@ export default function ProjectsPage() {
           comments: [...(prev.comments || []), res.data.comment],
           commentsCount: res.data.commentsCount
         }));
+        setProjects((prev) =>
+          prev.map((item) =>
+            item.id === selectedProject.id
+              ? {
+                  ...item,
+                  commentsCount: res.data.commentsCount,
+                  comments: [...(item.comments || []), res.data.comment]
+                }
+              : item
+          )
+        );
         setCommentText('');
         showToast('Comment posted');
       }

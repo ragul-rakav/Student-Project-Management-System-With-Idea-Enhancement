@@ -305,14 +305,29 @@ exports.submitProject = async (req, res) => {
       });
     }
 
-    // Notify Assigned Faculty Reviewer
+    // Notify Assigned Faculty Reviewer & Platform Admin
+    const facUser = dataStore.users.find(u => u.name === assignedFaculty);
+    const facEmail = facUser ? facUser.email : assignedFaculty;
+
     dataStore.notifications.unshift({
       id: dataStore.notifications.length + 1,
-      email: assignedFaculty,
+      email: facEmail,
+      recipientName: assignedFaculty,
       icon: 'bell',
       text: `New ${type} Project assigned for review: "${title}" by ${user ? user.name : 'Student'}${originalityReport.isResubmissionOfRejected ? ' [Flagged Resubmission of Rejected Project]' : ''}`,
       time: 'Just now',
       route: '/reviews',
+      read: false
+    });
+
+    dataStore.notifications.unshift({
+      id: dataStore.notifications.length + 1,
+      email: 'admin@university.edu',
+      recipientName: 'Admin User',
+      icon: 'bell',
+      text: `New ${type} Project submitted: "${title}" by ${user ? user.name : 'Student'} (Assigned to ${assignedFaculty})`,
+      time: 'Just now',
+      route: '/admin',
       read: false
     });
 
@@ -546,9 +561,13 @@ exports.reportProject = (req, res) => {
     if (!dataStore.reports) dataStore.reports = [];
     dataStore.reports.unshift(reportObj);
 
+    const reportFacUser = dataStore.users.find(u => u.name === assignedFaculty);
+    const reportFacEmail = reportFacUser ? reportFacUser.email : assignedFaculty;
+
     dataStore.notifications.unshift({
       id: dataStore.notifications.length + 1,
-      email: assignedFaculty,
+      email: reportFacEmail,
+      recipientName: assignedFaculty,
       icon: 'bell',
       text: `Report assigned for review: "${p.title}" reported by ${user ? user.name : 'User'}: ${category || 'Violation'}`,
       time: 'Just now',
@@ -558,7 +577,8 @@ exports.reportProject = (req, res) => {
 
     dataStore.notifications.unshift({
       id: dataStore.notifications.length + 1,
-      email: 'Administrator',
+      email: 'admin@university.edu',
+      recipientName: 'Admin User',
       icon: 'bell',
       text: `Report on "${p.title}" assigned to ${assignedFaculty}`,
       time: 'Just now',

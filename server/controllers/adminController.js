@@ -208,12 +208,33 @@ exports.getAnalytics = (req, res) => {
 
 exports.getNotifications = (req, res) => {
   try {
-    const userEmail = req.user.email;
-    const userRole = req.user.role;
+    const userEmail = (req.user?.email || '').toLowerCase().trim();
+    const userRole = (req.user?.role || '').trim();
+    const userName = (req.user?.name || '').toLowerCase().trim();
 
-    const myNotifs = dataStore.notifications.filter(n =>
-      n.email.toLowerCase() === userEmail.toLowerCase() || n.email === userRole
-    );
+    const myNotifs = dataStore.notifications.filter(n => {
+      if (!n) return false;
+      const target = (n.email || '').toLowerCase().trim();
+      const recipient = (n.recipientName || '').toLowerCase().trim();
+
+      // 1. Direct match with email
+      if (target && target === userEmail) return true;
+
+      // 2. Direct match with user's full name (e.g. Dr. Arumugam Pillai, Dr. Senthamizhan V, Dr. Thenmozhi K)
+      if (userName && (target === userName || recipient === userName || target.includes(userName) || userName.includes(target))) return true;
+
+      // 3. Match by role (Administrator / Admin / Faculty / Student)
+      if (target === userRole.toLowerCase()) return true;
+      if (userRole === 'Administrator' && (target === 'administrator' || target === 'admin' || target === 'admin user' || target === 'admin@university.edu')) return true;
+      if (userRole === 'Faculty' && (target === 'faculty' || target === 'staff')) return true;
+      if (userRole === 'Student' && target === 'student') return true;
+
+      // 4. Match if notification was stored with faculty's name and logged-in user is that faculty
+      const matchedFaculty = dataStore.users.find(u => u.name && u.name.toLowerCase() === target);
+      if (matchedFaculty && matchedFaculty.email.toLowerCase() === userEmail) return true;
+
+      return false;
+    });
 
     return res.json({ success: true, notifications: myNotifs });
   } catch (err) {

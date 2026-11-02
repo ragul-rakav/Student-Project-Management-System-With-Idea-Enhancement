@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
   const handleNotificationClick = async (n) => {
     try {
-      await api.post(`/admin/notifications/${n.id}/read`);
+      await api.put(`/admin/notifications/${n.id}/read`);
     } catch (err) {}
     if (n.route) {
       navigate(n.route);

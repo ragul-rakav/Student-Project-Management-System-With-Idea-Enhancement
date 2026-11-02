@@ -18,6 +18,7 @@ router.get('/analytics', authenticateToken, authorizeRoles('Administrator'), adm
 router.get('/notifications', authenticateToken, adminController.getNotifications);
 router.delete('/notifications/:id', authenticateToken, adminController.deleteNotification);
 router.put('/notifications/:id/read', authenticateToken, adminController.markNotificationRead);
+router.post('/notifications/:id/read', authenticateToken, adminController.markNotificationRead);
 
 router.get('/reports', authenticateToken, authorizeRoles('Administrator'), adminController.getReports);
 router.post('/reports/resolve', authenticateToken, authorizeRoles('Administrator'), adminController.resolveReport);

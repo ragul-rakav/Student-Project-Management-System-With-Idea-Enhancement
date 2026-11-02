@@ -197,9 +197,25 @@ let reports = [
 ];
 
 let notifications = [
-  { id: 1, email: 'kavitha@university.edu', icon: 'star', text: 'Your External Project was approved. +25 credits', time: '2 hours ago', route: '/profile', read: false },
-  { id: 2, email: 'kavitha@university.edu', icon: 'bell', text: 'Dr. Pillai accepted your project guide request', time: '5 hours ago', route: '/projects', read: false },
-  { id: 3, email: 'Administrator', icon: 'bell', text: 'Custom domain request "Quantum Computing Simulators" submitted by Kavitha Sundaram', time: '1 day ago', route: '/admin?tab=domains', read: false }
+  // Student Notifications
+  { id: 1, email: 'kavitha@university.edu', recipientName: 'Kavitha Sundaram', icon: 'star', text: 'Your External Project was approved. +25 credits', time: '2 hours ago', route: '/profile', read: false },
+  { id: 2, email: 'kavitha@university.edu', recipientName: 'Kavitha Sundaram', icon: 'bell', text: 'Dr. Pillai accepted your project guide request', time: '5 hours ago', route: '/projects', read: false },
+  { id: 3, email: 'karthik@university.edu', recipientName: 'Karthik Raja', icon: 'star', text: 'Your project "Campus Marketplace App" crossed 40 likes! +1 credit point earned.', time: '1 day ago', route: '/projects', read: false },
+  { id: 4, email: 'priya@university.edu', recipientName: 'Priya Senthil', icon: 'users', text: 'Ananya Selvam requested to collaborate on "Smart Campus Navigation"', time: '1 day ago', route: '/collaboration', read: false },
+  { id: 5, email: 'ananya@university.edu', recipientName: 'Ananya Selvam', icon: 'award', text: 'Published Verified Project Idea. +5 credits earned.', time: '2 days ago', route: '/ideas', read: false },
+
+  // Faculty Reviewer Notifications
+  { id: 6, email: 'arumugam@university.edu', recipientName: 'Dr. Arumugam Pillai', icon: 'bell', text: 'New Internal Project assigned for evaluation: "Predictive Maintenance Dashboard" by Kavin Kumar', time: '4 hours ago', route: '/reviews', read: false },
+  { id: 7, email: 'arumugam@university.edu', recipientName: 'Dr. Arumugam Pillai', icon: 'chat', text: 'Mentorship guide request received from Dhanush Ram for "AI Resume Builder"', time: '1 day ago', route: '/guides', read: false },
+  { id: 8, email: 'senthamizhan@university.edu', recipientName: 'Dr. Senthamizhan V', icon: 'bell', text: 'New Internal Project assigned for evaluation: "Peer Tutoring Scheduler" by Priya Senthil', time: '5 hours ago', route: '/reviews', read: false },
+  { id: 9, email: 'senthamizhan@university.edu', recipientName: 'Dr. Senthamizhan V', icon: 'chat', text: 'Student comment posted on "Open Source LMS Plugin"', time: '2 days ago', route: '/projects', read: false },
+  { id: 10, email: 'thenmozhi@university.edu', recipientName: 'Dr. Thenmozhi K', icon: 'bell', text: 'New External Project assigned for review: "Campus Marketplace App" by Karthik Raja', time: '3 hours ago', route: '/reviews', read: false },
+  { id: 11, email: 'thenmozhi@university.edu', recipientName: 'Dr. Thenmozhi K', icon: 'shield', text: 'Violation report assigned for faculty review: "Campus Marketplace App" reported by Kavin Kumar', time: '1 day ago', route: '/reviews?tab=reports', read: false },
+
+  // Administrator Notifications
+  { id: 12, email: 'admin@university.edu', recipientName: 'Admin User', icon: 'shield', text: 'Security Audit: PostgreSQL database synchronized in Singapore (ap-southeast-1).', time: '1 hour ago', route: '/admin', read: false },
+  { id: 13, email: 'admin@university.edu', recipientName: 'Admin User', icon: 'bell', text: 'Custom domain request "Quantum Computing Simulators" submitted by Kavitha Sundaram', time: '1 day ago', route: '/admin?tab=domains', read: false },
+  { id: 14, email: 'admin@university.edu', recipientName: 'Admin User', icon: 'users', text: 'Platform roster verified: 12 students and 6 faculty active across all departments.', time: '2 days ago', route: '/admin?tab=students', read: false }
 ];
 
 let departments = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical'];

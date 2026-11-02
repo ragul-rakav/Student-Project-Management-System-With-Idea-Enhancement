@@ -38,9 +38,30 @@ export default function Shell({ children }) {
 
   const role = currentUser ? currentUser.role : 'Student';
 
+  // Auto-close notification panel and refresh notifications on route change
   useEffect(() => {
+    setNotifOpen(false);
     fetchNotifications();
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
+
+  // Auto-close notification panel when clicking outside or when focus/window changes
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (notifOpen && notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
+      }
+    };
+    const handleWindowBlur = () => {
+      setNotifOpen(false);
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    window.addEventListener('blur', handleWindowBlur);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [notifOpen]);
 
   const fetchNotifications = async () => {
     try {
@@ -154,6 +175,7 @@ export default function Shell({ children }) {
                     key={it.path}
                     className={`nav-item ${isActive ? 'active' : ''}`}
                     onClick={() => {
+                      setNotifOpen(false);
                       navigate(it.path);
                       setMobileSidebarOpen(false);
                       window.scrollTo(0, 0);
