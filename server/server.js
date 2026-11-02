@@ -94,8 +94,16 @@ if (fs.existsSync(assetsPath)) {
 
 if (fs.existsSync(publicPath)) {
   app.use(express.static(publicPath, {
-    maxAge: '1h',
-    etag: true
+    etag: true,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      } else {
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+      }
+    }
   }));
 }
 
@@ -126,6 +134,9 @@ app.get('*', (req, res, next) => {
   }
   const indexHtmlPath = path.join(publicPath, 'index.html');
   if (fs.existsSync(indexHtmlPath)) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     return res.sendFile(indexHtmlPath);
   }
   next();
