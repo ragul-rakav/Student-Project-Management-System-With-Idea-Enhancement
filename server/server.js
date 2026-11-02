@@ -76,11 +76,12 @@ const fs = require('fs');
 // Static directory for uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve static frontend assets if public folder exists or client/dist exists
+// Serve static frontend assets: prioritize fresh client/dist build, fallback to server/public
 const clientDistPath = path.join(__dirname, '../client/dist');
-const publicPath = fs.existsSync(path.join(__dirname, 'public'))
-  ? path.join(__dirname, 'public')
-  : (fs.existsSync(clientDistPath) ? clientDistPath : path.join(__dirname, 'public'));
+const publicFolder = path.join(__dirname, 'public');
+const publicPath = (fs.existsSync(clientDistPath) && fs.existsSync(path.join(clientDistPath, 'index.html')))
+  ? clientDistPath
+  : (fs.existsSync(publicFolder) ? publicFolder : clientDistPath);
 
 // 1-year immutable caching for hashed production Vite assets (bundle loads instantly from cache)
 const assetsPath = path.join(publicPath, 'assets');

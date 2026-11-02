@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "npm --prefix server install",
     "install:all": "npm --prefix client install && npm --prefix server install",
-    "build": "npm --prefix client install --include=dev && npm --prefix client run build && npm --prefix server install",
+    "build": "npm --prefix client install --include=dev && npm --prefix client run build && npm --prefix server install && node -e \"const fs=require('fs'); fs.cpSync('client/dist', 'server/public', {recursive: true, force: true});\"",
     "start": "node server/server.js",
     "deploy": "node server/database/migrateAndSeed.js && node server/server.js",
     "test": "npm --prefix server test",
